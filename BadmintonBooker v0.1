@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0f0f13"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Court Booker"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="apple-touch-icon" href="/icon-192.svg"/>
+  <title>Court Booker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --card: #17171f;
+      --card2: #1e1e28;
+      --border: rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.12);
+      --text: #f0f0f5;
+      --muted: #6b6b80;
+      --accent: #c8f135;
+      --accent-dim: rgba(200,241,53,0.12);
+      --success: #1D9E75;
+      --success-dim: rgba(29,158,117,0.12);
+      --warn: #EF9F27;
+      --warn-dim: rgba(239,159,39,0.12);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bot: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overscroll-behavior: none;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(200,241,53,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,241,53,0.025) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 16px calc(80px + var(--safe-bot)); }
+
+    .topbar {
+      padding: calc(var(--safe-top) + 20px) 0 16px;
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .venue-tag { font-size: 11px; font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .app-title { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1; letter-spacing: 1px; color: var(--text); }
+    .app-title span { color: var(--accent); }
+    .shuttle { font-size: 32px; animation: float 3s ease-in-out infinite; display: block; }
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(-8deg); }
+      50% { transform: translateY(-6px) rotate(8deg); }
+    }
+
+    .day-tabs {
+      display: flex; gap: 8px; margin: 16px 0 20px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; padding-bottom: 2px;
+    }
+    .day-tabs::-webkit-scrollbar { display: none; }
+    .day-tab {
+      flex-shrink: 0; padding: 8px 20px; border-radius: 20px;
+      border: 1px solid var(--border); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 400; color: var(--muted);
+      background: transparent; cursor: pointer; transition: all 0.18s;
+    }
+    .day-tab:active { transform: scale(0.96); }
+    .day-tab.active { background: var(--accent-dim); border-color: rgba(200,241,53,0.3); color: var(--accent); font-weight: 500; }
+
+    .slots { display: flex; flex-direction: column; gap: 12px; }
+
+    .slot-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; overflow: hidden; transition: border-color 0.2s;
+    }
+    .slot-card.all-booked { border-color: rgba(29,158,117,0.25); }
+
+    .slot-top { padding: 16px 16px 12px; display: flex; align-items: center; justify-content: space-between; }
+    .slot-label { font-size: 11px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .slot-time { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; color: var(--text); line-height: 1; }
+
+    .slot-status { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.3px; }
+    .slot-status.all { background: var(--success-dim); color: var(--success); }
+    .slot-status.partial { background: var(--warn-dim); color: var(--warn); }
+    .slot-status.none { background: rgba(255,255,255,0.05); color: var(--muted); }
+
+    .slot-players { padding: 0 16px 14px; display: flex; gap: 8px; }
+
+    .player {
+      flex: 1; background: var(--card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; transition: all 0.15s; user-select: none;
+    }
+    .player:active { transform: scale(0.97); }
+    .player.booked { border-color: rgba(29,158,117,0.3); background: rgba(29,158,117,0.06); }
+
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 500; flex-shrink: 0;
+    }
+    .player-info { flex: 1; min-width: 0; }
+    .player-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .player-status { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .player.booked .player-status { color: var(--success); }
+
+    .check-icon {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1.5px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .player.booked .check-icon { background: var(--success); border-color: var(--success); }
+    .check-icon svg { display: none; }
+    .player.booked .check-icon svg { display: block; }
+
+    .court-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(200,241,53,0.1); border: 1px solid rgba(200,241,53,0.25);
+      border-radius: 8px; padding: 4px 10px; margin: 0 16px 12px;
+      font-size: 12px; color: var(--accent); font-weight: 500;
+    }
+
+    .slot-footer { border-top: 1px solid var(--border); display: flex; }
+    .slot-action {
+      flex: 1; padding: 12px; font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 400; color: var(--muted);
+      background: transparent; border: none; cursor: pointer;
+      transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .slot-action:active { background: rgba(255,255,255,0.04); }
+
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px 16px calc(12px + var(--safe-bot));
+      background: rgba(15,15,19,0.92);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; z-index: 50;
+    }
+    .nav-info { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .nav-info strong { color: var(--text); font-weight: 500; font-size: 13px; }
+    .reset-btn {
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted);
+      background: transparent; border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 12px; cursor: pointer; transition: all 0.15s;
+    }
+    .reset-btn:active { background: rgba(255,255,255,0.05); }
+
+    .modal-bg {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      z-index: 100; align-items: flex-end; justify-content: center;
+    }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px calc(24px + var(--safe-bot));
+      width: 100%; max-width: 480px;
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 20px; }
+    .modal h3 { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+    .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .modal-field { margin-bottom: 14px; }
+    .modal-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .modal-field input {
+      width: 100%; background: var(--card2); border: 1px solid var(--border2);
+      border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; padding: 12px 14px; outline: none; transition: border-color 0.15s;
+    }
+    .modal-field input:focus { border-color: rgba(200,241,53,0.4); }
+    .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-btn {
+      flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border2);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.15s;
+    }
+    .modal-btn.cancel { background: transparent; color: var(--muted); }
+    .modal-btn.save { background: var(--accent); color: #0f0f13; font-weight: 500; border-color: var(--accent); }
+    .modal-btn:active { transform: scale(0.98); }
+
+    .court-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 4px; }
+    .court-btn {
+      background: var(--card2); border: 1px solid var(--border2);
+      border-radius: 12px; color: var(--muted);
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+      padding: 16px 8px; cursor: pointer; text-align: center; transition: all 0.15s;
+    }
+    .court-btn:active { transform: scale(0.95); }
+    .court-btn.selected { background: var(--accent-dim); border-color: rgba(200,241,53,0.4); color: var(--accent); }
+    .court-skip {
+      width: 100%; padding: 12px; background: transparent;
+      border: 1px solid var(--border); border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--muted); cursor: pointer; margin-top: 10px; transition: all 0.15s;
+    }
+    .court-skip:active { background: rgba(255,255,255,0.04); }
+
+    .toast {
+      position: fixed; bottom: calc(80px + var(--safe-bot) + 12px);
+      left: 50%; transform: translateX(-50%) translateY(10px);
+      background: var(--card2); border: 1px solid var(--border2);
+      border-radius: 20px; padding: 10px 20px;
+      font-size: 13px; color: var(--text);
+      opacity: 0; transition: all 0.2s;
+      pointer-events: none; white-space: nowrap; z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .loading { text-align: center; padding: 40px 0; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="venue-tag">Queen's Diamond Jubilee · Rugby</div>
+      <div class="app-title">Court<span>Booker</span></div>
+    </div>
+    <span class="shuttle">🏸</span>
+  </div>
+
+  <div class="day-tabs">
+    <button class="day-tab" data-day="monday" onclick="setDay('monday',this)">Monday</button>
+    <button class="day-tab" data-day="wednesday" onclick="setDay('wednesday',this)">Wednesday</button>
+    <button class="day-tab active" data-day="thursday" onclick="setDay('thursday',this)">Thursday</button>
+  </div>
+
+  <div class="slots" id="slots">
+    <div class="loading">Loading bookings...</div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-info">
+    <strong id="nav-day">Thursday</strong><br>
+    <span id="nav-date">Queen's Diamond Jubilee Centre</span>
+  </div>
+  <button class="reset-btn" onclick="confirmReset()">Reset week</button>
+</div>
+
+<!-- Edit Players Modal -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Edit players</h3>
+    <p id="modal-sub">Update who plays in this slot</p>
+    <div class="modal-field"><label>Player 1</label><input id="inp1" type="text"/></div>
+    <div class="modal-field"><label>Player 2</label><input id="inp2" type="text"/></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn save" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Court Number Modal -->
+<div class="modal-bg" id="court-modal-bg" onclick="closeCourtModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Which court?</h3>
+    <p id="court-modal-sub">Select your court number</p>
+    <div class="court-grid">
+      <button class="court-btn" onclick="selectCourt(1)">1</button>
+      <button class="court-btn" onclick="selectCourt(2)">2</button>
+      <button class="court-btn" onclick="selectCourt(3)">3</button>
+      <button class="court-btn" onclick="selectCourt(4)">4</button>
+    </div>
+    <button class="court-skip" onclick="selectCourt(null)">Skip — don't know yet</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS = ['#5DCAA5','#AFA9EC','#85B7EB','#F0997B','#97C459','#FAC775'];
+const nameColors = {};
+let colorIdx = 0;
+function color(name) {
+  if (!nameColors[name]) nameColors[name] = COLORS[colorIdx++ % COLORS.length];
+  return nameColors[name];
+}
+function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+let state = null;
+let currentDay = 'thursday';
+let editingSlot = null;
+let pendingCourtSlot = null;
+let pendingCourtPlayer = null;
+
+async function loadData() {
+  try {
+    const r = await fetch('/api/bookings');
+    state = await r.json();
+    updateTabDates();
+    render();
+  } catch(e) {
+    document.getElementById('slots').innerHTML = '<div class="loading">Couldn\'t load bookings. Check connection.</div>';
+  }
+}
+
+async function saveData() {
+  try {
+    await fetch('/api/bookings', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(state)
+    });
+  } catch(e) { console.error('Save failed', e); }
+}
+
+function ordinal(n) {
+  const s = ['th','st','nd','rd'], v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
+}
+
+function formatDate(date) {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${days[date.getDay()]} ${ordinal(date.getDate())} ${months[date.getMonth()]}`;
+}
+
+function updateTabDates() {
+  ['monday','wednesday','thursday'].forEach(day => {
+    const date = getNextDay(day);
+    const btn = document.querySelector(`[data-day="${day}"]`);
+    if (btn) {
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      btn.innerHTML = `${day.charAt(0).toUpperCase()+day.slice(1)}<span style="display:block;font-size:11px;opacity:0.7;margin-top:1px">${ordinal(date.getDate())} ${months[date.getMonth()]}</span>`;
+    }
+  });
+}
+
+function checkAutoReset() {
+  const lastReset = localStorage.getItem('lastResetWeek');
+  const now = new Date();
+  const weekKey = `${now.getFullYear()}-W${getWeekNumber(now)}`;
+  if (lastReset !== weekKey) {
+    fetch('/api/reset', {method:'POST'}).then(() => {
+      localStorage.setItem('lastResetWeek', weekKey);
+      loadData();
+    });
+  }
+}
+
+function getWeekNumber(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+}
+
+function setDay(day, el) {
+  currentDay = day;
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function getNextDay(dayName) {
+  const days = {sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
+  const today = new Date();
+  const target = days[dayName];
+  const current = today.getDay();
+  let diff = target - current;
+  if (diff <= 0) diff += 7;
+  const next = new Date(today);
+  next.setDate(today.getDate() + diff);
+  return next;
+}
+
+function render() {
+  if (!state) return;
+  const slots = state[currentDay];
+  const container = document.getElementById('slots');
+  container.innerHTML = '';
+
+  const nextDate = getNextDay(currentDay);
+  document.getElementById('nav-day').textContent = formatDate(nextDate);
+
+  slots.forEach((slot, i) => {
+    const bookedCount = slot.players.filter(p=>p.booked).length;
+    const allBooked = bookedCount === slot.players.length;
+    const noneBooked = bookedCount === 0;
+
+    const statusClass = allBooked ? 'all' : noneBooked ? 'none' : 'partial';
+    const statusText = allBooked ? 'All booked' : noneBooked ? 'Not booked' : 'Partially booked';
+
+    const card = document.createElement('div');
+    card.className = 'slot-card' + (allBooked ? ' all-booked' : '');
+
+    const playersHTML = slot.players.map((p, pi) => {
+      const c = color(p.name);
+      const courtLabel = p.booked && p.court ? `Court ${p.court}` : p.booked ? 'Booked' : 'Pending';
+      return `<div class="player${p.booked?' booked':''}" onclick="togglePlayer(${i},${pi})">
+        <div class="avatar" style="background:${c}22;color:${c}">${initials(p.name)}</div>
+        <div class="player-info">
+          <div class="player-name">${p.name}</div>
+          <div class="player-status">${courtLabel}</div>
+        </div>
+        <div class="check-icon">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+            <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>`;
+    }).join('');
+
+    const courts = slot.players.filter(p=>p.booked && p.court).map(p=>p.court);
+    const uniqueCourts = [...new Set(courts)];
+    let courtBadgeHTML = '';
+    if (uniqueCourts.length === 1 && courts.length === slot.players.length) {
+      courtBadgeHTML = `<div class="court-badge">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>
+        Court ${uniqueCourts[0]}
+      </div>`;
+    } else if (uniqueCourts.length > 1) {
+      courtBadgeHTML = `<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">
+        Courts ${uniqueCourts.join(' & ')}
+      </div>`;
+    }
+
+    card.innerHTML = `
+      <div class="slot-top">
+        <div class="slot-time-wrap">
+          <div class="slot-label">Court slot</div>
+          <div class="slot-time">${slot.time}</div>
+        </div>
+        <div class="slot-status ${statusClass}">${statusText}</div>
+      </div>
+      <div class="slot-players">${playersHTML}</div>
+      ${courtBadgeHTML}
+      <div class="slot-footer">
+        <button class="slot-action" onclick="openModal(${i})">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Edit players
+        </button>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function togglePlayer(slotIdx, playerIdx) {
+  const p = state[currentDay][slotIdx].players[playerIdx];
+  if (!p.booked) {
+    pendingCourtSlot = slotIdx;
+    pendingCourtPlayer = playerIdx;
+    const slot = state[currentDay][slotIdx];
+    document.getElementById('court-modal-sub').textContent = `${p.name} · ${slot.time}`;
+    document.querySelectorAll('.court-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('court-modal-bg').classList.add('open');
+  } else {
+    p.booked = false;
+    p.court = null;
+    saveData();
+    render();
+    showToast(`${p.name} marked as pending`);
+  }
+}
+
+function selectCourt(courtNum) {
+  const p = state[currentDay][pendingCourtSlot].players[pendingCourtPlayer];
+  p.booked = true;
+  p.court = courtNum;
+  document.getElementById('court-modal-bg').classList.remove('open');
+  saveData();
+  render();
+  const msg = courtNum ? `${p.name} booked — Court ${courtNum}` : `${p.name} marked as booked`;
+  showToast(msg);
+  pendingCourtSlot = null;
+  pendingCourtPlayer = null;
+}
+
+function closeCourtModal(e) {
+  if (e && e.target !== document.getElementById('court-modal-bg')) return;
+  document.getElementById('court-modal-bg').classList.remove('open');
+  pendingCourtSlot = null;
+  pendingCourtPlayer = null;
+}
+
+function openModal(slotIdx) {
+  editingSlot = slotIdx;
+  const slot = state[currentDay][slotIdx];
+  document.getElementById('modal-sub').textContent = slot.time;
+  document.getElementById('inp1').value = slot.players[0]?.name || '';
+  document.getElementById('inp2').value = slot.players[1]?.name || '';
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-bg')) return;
+  document.getElementById('modal-bg').classList.remove('open');
+  editingSlot = null;
+}
+
+function saveModal() {
+  const p1 = document.getElementById('inp1').value.trim();
+  const p2 = document.getElementById('inp2').value.trim();
+  const slot = state[currentDay][editingSlot];
+  if (p1) slot.players[0] = {name:p1, booked: slot.players[0]?.booked||false, court: slot.players[0]?.court||null};
+  if (p2) slot.players[1] = {name:p2, booked: slot.players[1]?.booked||false, court: slot.players[1]?.court||null};
+  document.getElementById('modal-bg').classList.remove('open');
+  editingSlot = null;
+  saveData();
+  render();
+  showToast('Players updated');
+}
+
+function confirmReset() {
+  if (confirm('Reset all bookings for this week?')) {
+    fetch('/api/reset', {method:'POST'}).then(() => { loadData(); showToast('Bookings reset'); });
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+checkAutoReset();
+loadData();
+</script>
+</body>
+</html>
