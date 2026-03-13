@@ -13,41 +13,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0f0f13;
-      --card: #17171f;
-      --card2: #1e1e28;
-      --border: rgba(255,255,255,0.07);
-      --border2: rgba(255,255,255,0.12);
-      --text: #f0f0f5;
-      --muted: #6b6b80;
-      --accent: #c8f135;
-      --accent-dim: rgba(200,241,53,0.12);
-      --success: #1D9E75;
-      --success-dim: rgba(29,158,117,0.12);
-      --warn: #EF9F27;
+      --bg: #0f0f13; --card: #17171f; --card2: #1e1e28;
+      --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+      --text: #f0f0f5; --muted: #6b6b80; --accent: #c8f135;
+      --accent-dim: rgba(200,241,53,0.12); --success: #1D9E75;
+      --success-dim: rgba(29,158,117,0.12); --warn: #EF9F27;
       --warn-dim: rgba(239,159,39,0.12);
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bot: env(safe-area-inset-bottom, 0px);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-    html, body {
-      background: var(--bg); color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh; overscroll-behavior: none;
-    }
-
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(200,241,53,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,241,53,0.025) 1px, transparent 1px);
-      background-size: 36px 36px; pointer-events: none; z-index: 0;
-    }
+    html, body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overscroll-behavior: none; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(200,241,53,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(200,241,53,0.025) 1px, transparent 1px); background-size: 36px 36px; pointer-events: none; z-index: 0; }
 
     .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 16px calc(80px + var(--safe-bot)); }
-
     .topbar { padding: calc(var(--safe-top) + 20px) 0 16px; display: flex; align-items: flex-end; justify-content: space-between; }
     .venue-tag { font-size: 11px; font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
     .app-title { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1; letter-spacing: 1px; color: var(--text); }
@@ -62,31 +41,26 @@
     .day-tab.active { background: var(--accent-dim); border-color: rgba(200,241,53,0.3); color: var(--accent); font-weight: 500; }
 
     .slots { display: flex; flex-direction: column; gap: 12px; }
-
     .slot-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: border-color 0.2s; }
     .slot-card.all-booked { border-color: rgba(29,158,117,0.25); }
-
     .slot-top { padding: 16px 16px 12px; display: flex; align-items: center; justify-content: space-between; }
     .slot-label { font-size: 11px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
     .slot-time { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; color: var(--text); line-height: 1; }
-
     .slot-status { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.3px; }
     .slot-status.all { background: var(--success-dim); color: var(--success); }
     .slot-status.partial { background: var(--warn-dim); color: var(--warn); }
     .slot-status.none { background: rgba(255,255,255,0.05); color: var(--muted); }
 
     .slot-players { padding: 0 16px 14px; display: flex; gap: 8px; }
-
     .player { flex: 1; background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.15s; user-select: none; }
     .player:active { transform: scale(0.97); }
     .player.booked { border-color: rgba(29,158,117,0.3); background: rgba(29,158,117,0.06); }
-
+    .player.empty { border-style: dashed; opacity: 0.6; }
     .avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
     .player-info { flex: 1; min-width: 0; }
     .player-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .player-status { font-size: 11px; color: var(--muted); margin-top: 1px; }
     .player.booked .player-status { color: var(--success); }
-
     .check-icon { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
     .player.booked .check-icon { background: var(--success); border-color: var(--success); }
     .check-icon svg { display: none; }
@@ -97,7 +71,6 @@
     .slot-footer { border-top: 1px solid var(--border); display: flex; }
     .slot-action { flex: 1; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); background: transparent; border: none; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .slot-action:active { background: rgba(255,255,255,0.04); }
-    .slot-action + .slot-action { border-left: 1px solid var(--border); }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px calc(12px + var(--safe-bot)); background: rgba(15,15,19,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 50; }
     .nav-info { font-size: 12px; color: var(--muted); line-height: 1.5; }
@@ -113,18 +86,13 @@
     .modal h3 { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
     .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
 
-    .modal-field { margin-bottom: 14px; }
-    .modal-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-
-    /* DROPDOWN STYLE */
-    .dropdown-row { display: flex; gap: 10px; margin-bottom: 20px; }
+    .dropdown-row { display: flex; gap: 10px; margin-bottom: 16px; }
     .dropdown-wrap { flex: 1; }
     .dropdown-wrap label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
     .dropdown-wrap select {
       width: 100%; background: var(--card2); border: 1px solid var(--border2);
       border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif;
-      font-size: 14px; padding: 12px 14px; outline: none;
-      appearance: none; -webkit-appearance: none;
+      font-size: 14px; padding: 12px 14px; outline: none; appearance: none; -webkit-appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b80' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 14px center;
       transition: border-color 0.15s; cursor: pointer;
@@ -138,7 +106,6 @@
     .modal-btn.save { background: var(--accent); color: #0f0f13; font-weight: 500; border-color: var(--accent); }
     .modal-btn.danger { background: transparent; color: #ff5555; border-color: rgba(255,85,85,0.3); }
     .modal-btn:active { transform: scale(0.98); }
-
     .modal-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
     .toast { position: fixed; bottom: calc(80px + var(--safe-bot) + 12px); left: 50%; transform: translateX(-50%) translateY(10px); background: var(--card2); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 20px; font-size: 13px; color: var(--text); opacity: 0; transition: all 0.2s; pointer-events: none; white-space: nowrap; z-index: 200; }
@@ -156,16 +123,12 @@
     </div>
     <span class="shuttle">🏸</span>
   </div>
-
   <div class="day-tabs">
     <button class="day-tab" data-day="monday" onclick="setDay('monday',this)">Monday</button>
     <button class="day-tab" data-day="wednesday" onclick="setDay('wednesday',this)">Wednesday</button>
     <button class="day-tab active" data-day="thursday" onclick="setDay('thursday',this)">Thursday</button>
   </div>
-
-  <div class="slots" id="slots">
-    <div class="loading">Loading bookings...</div>
-  </div>
+  <div class="slots" id="slots"><div class="loading">Loading bookings...</div></div>
 </div>
 
 <div class="bottom-nav">
@@ -176,72 +139,37 @@
   <button class="reset-btn" onclick="confirmReset()">Reset week</button>
 </div>
 
-<!-- Book / Edit Slot Modal -->
-<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+<!-- Single player modal -->
+<div class="modal-bg" id="single-modal-bg" onclick="closeSingleModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h3 id="modal-title">Book slot</h3>
-    <p id="modal-sub">Select players and courts</p>
-
+    <h3 id="single-modal-title">Book slot</h3>
+    <p id="single-modal-sub">Select your name and court</p>
     <div class="dropdown-row">
       <div class="dropdown-wrap">
-        <label>Player 1</label>
-        <select id="sel-name-1">
+        <label>Your name</label>
+        <select id="single-name">
           <option value="">— select —</option>
-          <option>Akhil</option>
-          <option>Sumedh</option>
-          <option>Pujitha</option>
-          <option>Advaith</option>
-          <option>Praneeth</option>
-          <option>Hasini</option>
-          <option>Kishika</option>
+          <option>Akhil</option><option>Sumedh</option><option>Pujitha</option>
+          <option>Advaith</option><option>Praneeth</option><option>Hasini</option><option>Kishika</option>
         </select>
       </div>
-      <div class="dropdown-wrap" style="max-width:110px">
+      <div class="dropdown-wrap" style="max-width:120px">
         <label>Court</label>
-        <select id="sel-court-1">
+        <select id="single-court">
           <option value="">—</option>
-          <option value="1">Court 1</option>
-          <option value="2">Court 2</option>
-          <option value="3">Court 3</option>
-          <option value="4">Court 4</option>
+          <option value="1">Court 1</option><option value="2">Court 2</option>
+          <option value="3">Court 3</option><option value="4">Court 4</option>
         </select>
       </div>
     </div>
-
-    <div class="dropdown-row">
-      <div class="dropdown-wrap">
-        <label>Player 2</label>
-        <select id="sel-name-2">
-          <option value="">— select —</option>
-          <option>Akhil</option>
-          <option>Sumedh</option>
-          <option>Pujitha</option>
-          <option>Advaith</option>
-          <option>Praneeth</option>
-          <option>Hasini</option>
-          <option>Kishika</option>
-        </select>
-      </div>
-      <div class="dropdown-wrap" style="max-width:110px">
-        <label>Court</label>
-        <select id="sel-court-2">
-          <option value="">—</option>
-          <option value="1">Court 1</option>
-          <option value="2">Court 2</option>
-          <option value="3">Court 3</option>
-          <option value="4">Court 4</option>
-        </select>
-      </div>
-    </div>
-
     <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
-      <button class="modal-btn save" onclick="saveSlotModal()">Save</button>
+      <button class="modal-btn cancel" onclick="closeSingleModal()">Cancel</button>
+      <button class="modal-btn save" onclick="saveSingleModal()">Save</button>
     </div>
     <hr class="modal-divider"/>
     <div class="modal-btns">
-      <button class="modal-btn danger" onclick="clearSlot()">Clear this slot</button>
+      <button class="modal-btn danger" onclick="clearSinglePlayer()">Clear this spot</button>
     </div>
   </div>
 </div>
@@ -253,46 +181,44 @@ const MEMBERS = ['Akhil','Sumedh','Pujitha','Advaith','Praneeth','Hasini','Kishi
 const COLORS = ['#5DCAA5','#AFA9EC','#85B7EB','#F0997B','#97C459','#FAC775','#F5C4B3'];
 const nameColors = {};
 MEMBERS.forEach((m,i) => nameColors[m] = COLORS[i]);
-
-function color(name) { return nameColors[name] || '#888'; }
-function initials(name) { return name ? name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '?'; }
+function color(name) { return nameColors[name] || '#555'; }
+function initials(name) { return name ? name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '+'; }
 
 const SLOTS = {
-  monday:    ['6:40 – 7:20 pm', '7:20 – 8:00 pm', '8:00 – 8:40 pm'],
-  wednesday: ['6:40 – 7:20 pm', '7:20 – 8:00 pm', '8:00 – 8:40 pm'],
-  thursday:  ['6:00 – 6:40 pm', '6:40 – 7:20 pm', '7:20 – 8:00 pm'],
+  monday:    ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
+  wednesday: ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
+  thursday:  ['6:00 – 6:40 pm','6:40 – 7:20 pm','7:20 – 8:00 pm'],
 };
 
 function makeDefaultState() {
-  const state = {};
+  const s = {};
   ['monday','wednesday','thursday'].forEach(day => {
-    state[day] = SLOTS[day].map(time => ({
+    s[day] = SLOTS[day].map(time => ({
       time,
       players: [
-        {name: '', booked: false, court: null},
-        {name: '', booked: false, court: null},
+        {name:'', booked:false, court:null},
+        {name:'', booked:false, court:null},
       ]
     }));
   });
-  return state;
+  return s;
 }
 
 let state = null;
 let currentDay = 'thursday';
 let editingSlot = null;
+let editingPlayer = null;
 
 async function loadData() {
   try {
     const r = await fetch('/api/bookings');
-    const raw = await r.json();
-    // Migrate old data or use as-is, but ensure thursday has correct slots
-    state = raw;
-    // Ensure slot times are correct for each day (in case of old data)
+    state = await r.json();
     ['monday','wednesday','thursday'].forEach(day => {
       if (!state[day]) state[day] = makeDefaultState()[day];
       SLOTS[day].forEach((time, i) => {
         if (!state[day][i]) state[day][i] = {time, players:[{name:'',booked:false,court:null},{name:'',booked:false,court:null}]};
         state[day][i].time = time;
+        state[day][i].players.forEach(p => { if (!p.name) { p.name=''; p.booked=false; p.court=null; } });
       });
     });
     updateTabDates();
@@ -304,11 +230,7 @@ async function loadData() {
 
 async function saveData() {
   try {
-    await fetch('/api/bookings', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(state)
-    });
+    await fetch('/api/bookings', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(state) });
   } catch(e) { console.error('Save failed', e); }
 }
 
@@ -327,10 +249,9 @@ function updateTabDates() {
   ['monday','wednesday','thursday'].forEach(day => {
     const date = getNextDay(day);
     const btn = document.querySelector(`[data-day="${day}"]`);
-    if (btn) {
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      btn.innerHTML = `${day.charAt(0).toUpperCase()+day.slice(1)}<span style="display:block;font-size:11px;opacity:0.7;margin-top:1px">${ordinal(date.getDate())} ${months[date.getMonth()]}</span>`;
-    }
+    if (!btn) return;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    btn.innerHTML = `${day.charAt(0).toUpperCase()+day.slice(1)}<span style="display:block;font-size:11px;opacity:0.7;margin-top:1px">${ordinal(date.getDate())} ${months[date.getMonth()]}</span>`;
   });
 }
 
@@ -339,8 +260,7 @@ function checkAutoReset() {
   const now = new Date();
   const weekKey = `${now.getFullYear()}-W${getWeekNumber(now)}`;
   if (lastReset !== weekKey) {
-    const fresh = makeDefaultState();
-    state = fresh;
+    state = makeDefaultState();
     saveData().then(() => localStorage.setItem('lastResetWeek', weekKey));
   }
 }
@@ -376,17 +296,13 @@ function render() {
   const slots = state[currentDay];
   const container = document.getElementById('slots');
   container.innerHTML = '';
-
-  const nextDate = getNextDay(currentDay);
-  document.getElementById('nav-day').textContent = formatDate(nextDate);
+  document.getElementById('nav-day').textContent = formatDate(getNextDay(currentDay));
 
   slots.forEach((slot, i) => {
-    const bookedPlayers = slot.players.filter(p => p.booked && p.name);
-    const bookedCount = bookedPlayers.length;
-    const totalNamed = slot.players.filter(p => p.name).length;
-    const allBooked = totalNamed > 0 && bookedCount === totalNamed;
+    const bookedCount = slot.players.filter(p => p.booked && p.name).length;
+    const namedCount = slot.players.filter(p => p.name).length;
+    const allBooked = namedCount > 0 && bookedCount === namedCount;
     const noneBooked = bookedCount === 0;
-
     const statusClass = allBooked ? 'all' : noneBooked ? 'none' : 'partial';
     const statusText = allBooked ? 'All booked' : noneBooked ? 'Not booked' : 'Partially booked';
 
@@ -394,14 +310,14 @@ function render() {
     card.className = 'slot-card' + (allBooked ? ' all-booked' : '');
 
     const playersHTML = slot.players.map((p, pi) => {
-      const hasName = p.name && p.name !== '';
-      const c = hasName ? color(p.name) : '#444';
-      const courtLabel = p.booked && p.court ? `Court ${p.court}` : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Empty';
-      return `<div class="player${p.booked?' booked':''}" onclick="openModal(${i})">
-        <div class="avatar" style="background:${c}22;color:${c}">${hasName ? initials(p.name) : '+'}</div>
+      const hasName = !!p.name;
+      const c = hasName ? color(p.name) : '#3a3a4a';
+      const statusTxt = p.booked && p.court ? `Court ${p.court}` : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
+      return `<div class="player${p.booked?' booked':''}${!hasName?' empty':''}" onclick="openSingleModal(${i},${pi})">
+        <div class="avatar" style="background:${c}${hasName?'22':'44'};color:${hasName?c:'#555'}">${initials(p.name)}</div>
         <div class="player-info">
-          <div class="player-name">${hasName ? p.name : 'Tap to assign'}</div>
-          <div class="player-status">${courtLabel}</div>
+          <div class="player-name" style="${!hasName?'color:var(--muted);font-weight:400':''}">${hasName ? p.name : 'Tap to assign'}</div>
+          <div class="player-status">${statusTxt}</div>
         </div>
         <div class="check-icon">
           <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
@@ -411,18 +327,13 @@ function render() {
       </div>`;
     }).join('');
 
-    const courts = slot.players.filter(p=>p.booked && p.court).map(p=>p.court);
+    const courts = slot.players.filter(p=>p.booked&&p.court).map(p=>p.court);
     const uniqueCourts = [...new Set(courts)];
     let courtBadgeHTML = '';
     if (uniqueCourts.length === 1 && courts.length >= 1) {
-      courtBadgeHTML = `<div class="court-badge">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>
-        Court ${uniqueCourts[0]}
-      </div>`;
+      courtBadgeHTML = `<div class="court-badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>Court ${uniqueCourts[0]}</div>`;
     } else if (uniqueCourts.length > 1) {
-      courtBadgeHTML = `<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">
-        Courts ${uniqueCourts.join(' & ')}
-      </div>`;
+      courtBadgeHTML = `<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">Courts ${uniqueCourts.join(' & ')}</div>`;
     }
 
     card.innerHTML = `
@@ -434,68 +345,51 @@ function render() {
         <div class="slot-status ${statusClass}">${statusText}</div>
       </div>
       <div class="slot-players">${playersHTML}</div>
-      ${courtBadgeHTML}
-      <div class="slot-footer">
-        <button class="slot-action" onclick="openModal(${i})">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Edit slot
-        </button>
-      </div>`;
+      ${courtBadgeHTML}`;
     container.appendChild(card);
   });
 }
 
-function openModal(slotIdx) {
+function openSingleModal(slotIdx, playerIdx) {
   editingSlot = slotIdx;
+  editingPlayer = playerIdx;
   const slot = state[currentDay][slotIdx];
-  document.getElementById('modal-title').textContent = 'Edit slot';
-  document.getElementById('modal-sub').textContent = slot.time;
-
-  const p1 = slot.players[0];
-  const p2 = slot.players[1];
-
-  document.getElementById('sel-name-1').value = p1.name || '';
-  document.getElementById('sel-court-1').value = p1.court || '';
-  document.getElementById('sel-name-2').value = p2.name || '';
-  document.getElementById('sel-court-2').value = p2.court || '';
-
-  document.getElementById('modal-bg').classList.add('open');
+  const p = slot.players[playerIdx];
+  const label = playerIdx === 0 ? 'Player 1' : 'Player 2';
+  document.getElementById('single-modal-title').textContent = `${label} · ${slot.time}`;
+  document.getElementById('single-modal-sub').textContent = 'Select name and court number';
+  document.getElementById('single-name').value = p.name || '';
+  document.getElementById('single-court').value = p.court || '';
+  document.getElementById('single-modal-bg').classList.add('open');
 }
 
-function closeModal(e) {
-  if (e && e.target !== document.getElementById('modal-bg')) return;
-  document.getElementById('modal-bg').classList.remove('open');
-  editingSlot = null;
+function closeSingleModal(e) {
+  if (e && e.target !== document.getElementById('single-modal-bg')) return;
+  document.getElementById('single-modal-bg').classList.remove('open');
+  editingSlot = null; editingPlayer = null;
 }
 
-function saveSlotModal() {
-  const slot = state[currentDay][editingSlot];
-
-  const name1 = document.getElementById('sel-name-1').value;
-  const court1 = document.getElementById('sel-court-1').value;
-  const name2 = document.getElementById('sel-name-2').value;
-  const court2 = document.getElementById('sel-court-2').value;
-
-  slot.players[0] = { name: name1, booked: name1 !== '' && court1 !== '', court: court1 || null };
-  slot.players[1] = { name: name2, booked: name2 !== '' && court2 !== '', court: court2 || null };
-
-  document.getElementById('modal-bg').classList.remove('open');
-  editingSlot = null;
-  saveData();
-  render();
-  showToast('Slot updated');
+function saveSingleModal() {
+  const name = document.getElementById('single-name').value;
+  const court = document.getElementById('single-court').value;
+  const p = state[currentDay][editingSlot].players[editingPlayer];
+  p.name = name;
+  p.court = court || null;
+  p.booked = name !== '' && court !== '';
+  document.getElementById('single-modal-bg').classList.remove('open');
+  editingSlot = null; editingPlayer = null;
+  saveData(); render();
+  const msg = p.booked ? `${name} booked — Court ${court}` : name ? `${name} assigned` : 'Slot cleared';
+  showToast(msg);
 }
 
-function clearSlot() {
-  state[currentDay][editingSlot].players = [
-    {name:'', booked:false, court:null},
-    {name:'', booked:false, court:null}
-  ];
-  document.getElementById('modal-bg').classList.remove('open');
-  editingSlot = null;
-  saveData();
-  render();
-  showToast('Slot cleared');
+function clearSinglePlayer() {
+  const p = state[currentDay][editingSlot].players[editingPlayer];
+  p.name = ''; p.booked = false; p.court = null;
+  document.getElementById('single-modal-bg').classList.remove('open');
+  editingSlot = null; editingPlayer = null;
+  saveData(); render();
+  showToast('Spot cleared');
 }
 
 function confirmReset() {
