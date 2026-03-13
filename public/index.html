@@ -68,15 +68,14 @@
 
     .court-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(200,241,53,0.1); border: 1px solid rgba(200,241,53,0.25); border-radius: 8px; padding: 4px 10px; margin: 0 16px 12px; font-size: 12px; color: var(--accent); font-weight: 500; }
 
-    .slot-footer { border-top: 1px solid var(--border); display: flex; }
-    .slot-action { flex: 1; padding: 12px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); background: transparent; border: none; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .slot-action:active { background: rgba(255,255,255,0.04); }
-
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px calc(12px + var(--safe-bot)); background: rgba(15,15,19,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 50; }
     .nav-info { font-size: 12px; color: var(--muted); line-height: 1.5; }
     .nav-info strong { color: var(--text); font-weight: 500; font-size: 13px; }
     .reset-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; transition: all 0.15s; }
     .reset-btn:active { background: rgba(255,255,255,0.05); }
+
+    .wa-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 20px; padding: 13px; border-radius: 14px; border: 1px solid rgba(37,211,102,0.3); background: rgba(37,211,102,0.08); color: #25d366; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .wa-btn:active { transform: scale(0.98); background: rgba(37,211,102,0.14); }
 
     .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; align-items: flex-end; justify-content: center; }
     .modal-bg.open { display: flex; }
@@ -129,6 +128,10 @@
     <button class="day-tab active" data-day="thursday" onclick="setDay('thursday',this)">Thursday</button>
   </div>
   <div class="slots" id="slots"><div class="loading">Loading bookings...</div></div>
+  <button class="wa-btn" onclick="shareWhatsApp()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.11 1.523 5.835L0 24l6.338-1.499A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.374l-.36-.214-3.732.882.939-3.627-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
+    Share to WhatsApp
+  </button>
 </div>
 
 <div class="bottom-nav">
@@ -242,23 +245,23 @@ function ordinal(n) {
 function formatDate(date) {
   const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${days[date.getDay()]} ${ordinal(date.getDate())} ${months[date.getMonth()]}`;
+  return days[date.getDay()] + ' ' + ordinal(date.getDate()) + ' ' + months[date.getMonth()];
 }
 
 function updateTabDates() {
   ['monday','wednesday','thursday'].forEach(day => {
     const date = getNextDay(day);
-    const btn = document.querySelector(`[data-day="${day}"]`);
+    const btn = document.querySelector('[data-day="' + day + '"]');
     if (!btn) return;
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    btn.innerHTML = `${day.charAt(0).toUpperCase()+day.slice(1)}<span style="display:block;font-size:11px;opacity:0.7;margin-top:1px">${ordinal(date.getDate())} ${months[date.getMonth()]}</span>`;
+    btn.innerHTML = day.charAt(0).toUpperCase()+day.slice(1) + '<span style="display:block;font-size:11px;opacity:0.7;margin-top:1px">' + ordinal(date.getDate()) + ' ' + months[date.getMonth()] + '</span>';
   });
 }
 
 function checkAutoReset() {
   const lastReset = localStorage.getItem('lastResetWeek');
   const now = new Date();
-  const weekKey = `${now.getFullYear()}-W${getWeekNumber(now)}`;
+  const weekKey = now.getFullYear() + '-W' + getWeekNumber(now);
   if (lastReset !== weekKey) {
     state = makeDefaultState();
     saveData().then(() => localStorage.setItem('lastResetWeek', weekKey));
@@ -312,40 +315,27 @@ function render() {
     const playersHTML = slot.players.map((p, pi) => {
       const hasName = !!p.name;
       const c = hasName ? color(p.name) : '#3a3a4a';
-      const statusTxt = p.booked && p.court ? `Court ${p.court}` : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
-      return `<div class="player${p.booked?' booked':''}${!hasName?' empty':''}" onclick="openSingleModal(${i},${pi})">
-        <div class="avatar" style="background:${c}${hasName?'22':'44'};color:${hasName?c:'#555'}">${initials(p.name)}</div>
-        <div class="player-info">
-          <div class="player-name" style="${!hasName?'color:var(--muted);font-weight:400':''}">${hasName ? p.name : 'Tap to assign'}</div>
-          <div class="player-status">${statusTxt}</div>
-        </div>
-        <div class="check-icon">
-          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-            <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      </div>`;
+      const statusTxt = p.booked && p.court ? 'Court ' + p.court : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
+      return '<div class="player' + (p.booked?' booked':'') + (!hasName?' empty':'') + '" onclick="openSingleModal(' + i + ',' + pi + ')">'
+        + '<div class="avatar" style="background:' + c + (hasName?'22':'44') + ';color:' + (hasName?c:'#555') + '">' + initials(p.name) + '</div>'
+        + '<div class="player-info">'
+        + '<div class="player-name" style="' + (!hasName?'color:var(--muted);font-weight:400':'') + '">' + (hasName ? p.name : 'Tap to assign') + '</div>'
+        + '<div class="player-status">' + statusTxt + '</div>'
+        + '</div>'
+        + '<div class="check-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+        + '</div>';
     }).join('');
 
     const courts = slot.players.filter(p=>p.booked&&p.court).map(p=>p.court);
     const uniqueCourts = [...new Set(courts)];
     let courtBadgeHTML = '';
     if (uniqueCourts.length === 1 && courts.length >= 1) {
-      courtBadgeHTML = `<div class="court-badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>Court ${uniqueCourts[0]}</div>`;
+      courtBadgeHTML = '<div class="court-badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>Court ' + uniqueCourts[0] + '</div>';
     } else if (uniqueCourts.length > 1) {
-      courtBadgeHTML = `<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">Courts ${uniqueCourts.join(' & ')}</div>`;
+      courtBadgeHTML = '<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">Courts ' + uniqueCourts.join(' & ') + '</div>';
     }
 
-    card.innerHTML = `
-      <div class="slot-top">
-        <div class="slot-time-wrap">
-          <div class="slot-label">Court slot</div>
-          <div class="slot-time">${slot.time}</div>
-        </div>
-        <div class="slot-status ${statusClass}">${statusText}</div>
-      </div>
-      <div class="slot-players">${playersHTML}</div>
-      ${courtBadgeHTML}`;
+    card.innerHTML = '<div class="slot-top"><div class="slot-time-wrap"><div class="slot-label">Court slot</div><div class="slot-time">' + slot.time + '</div></div><div class="slot-status ' + statusClass + '">' + statusText + '</div></div><div class="slot-players">' + playersHTML + '</div>' + courtBadgeHTML;
     container.appendChild(card);
   });
 }
@@ -356,7 +346,7 @@ function openSingleModal(slotIdx, playerIdx) {
   const slot = state[currentDay][slotIdx];
   const p = slot.players[playerIdx];
   const label = playerIdx === 0 ? 'Player 1' : 'Player 2';
-  document.getElementById('single-modal-title').textContent = `${label} · ${slot.time}`;
+  document.getElementById('single-modal-title').textContent = label + ' · ' + slot.time;
   document.getElementById('single-modal-sub').textContent = 'Select name and court number';
   document.getElementById('single-name').value = p.name || '';
   document.getElementById('single-court').value = p.court || '';
@@ -379,7 +369,7 @@ function saveSingleModal() {
   document.getElementById('single-modal-bg').classList.remove('open');
   editingSlot = null; editingPlayer = null;
   saveData(); render();
-  const msg = p.booked ? `${name} booked — Court ${court}` : name ? `${name} assigned` : 'Slot cleared';
+  const msg = p.booked ? name + ' booked - Court ' + court : name ? name + ' assigned' : 'Slot cleared';
   showToast(msg);
 }
 
@@ -397,6 +387,29 @@ function confirmReset() {
     state = makeDefaultState();
     saveData().then(() => { updateTabDates(); render(); showToast('All bookings reset'); });
   }
+}
+
+function shareWhatsApp() {
+  if (!state) return;
+  const date = getNextDay(currentDay);
+  const dayLabel = formatDate(date);
+  const slots = state[currentDay];
+  let msg = '🏸 *Court Booker - ' + dayLabel + '*\n';
+  msg += "Queen's Diamond Jubilee Centre\n\n";
+  slots.forEach(slot => {
+    msg += '*' + slot.time + '*\n';
+    slot.players.forEach(p => {
+      if (p.name) {
+        const courtTxt = p.court ? ' - Court ' + p.court : ' - not booked yet';
+        const tick = p.booked ? '✅' : '⏳';
+        msg += tick + ' ' + p.name + courtTxt + '\n';
+      } else {
+        msg += '➕ Empty slot\n';
+      }
+    });
+    msg += '\n';
+  });
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function showToast(msg) {
