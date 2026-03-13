@@ -1,37 +1,40 @@
 from flask import Flask, send_from_directory, jsonify, request
-import json, os
+import json, os, redis
 
 app = Flask(__name__, static_folder='public')
 
-DATA_FILE = 'bookings.json'
+REDIS_URL = os.environ.get('REDIS_URL')
+rdb = redis.from_url(REDIS_URL) if REDIS_URL else None
+REDIS_KEY = 'courtbooker:bookings'
 
 DEFAULT_DATA = {
     "monday": [
-        {"time": "6:40 – 7:20 pm", "players": [{"name": "Akhil", "booked": False}, {"name": "Sumedh", "booked": False}]},
-        {"time": "7:20 – 8:00 pm", "players": [{"name": "Pujitha", "booked": False}, {"name": "Advaith", "booked": False}]},
-        {"time": "8:00 – 8:40 pm", "players": [{"name": "Praneeth", "booked": False}, {"name": "Hasini", "booked": False}]},
+        {"time": "6:40 – 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "7:20 – 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "8:00 – 8:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
     ],
     "wednesday": [
-        {"time": "6:40 – 7:20 pm", "players": [{"name": "Akhil", "booked": False}, {"name": "Sumedh", "booked": False}]},
-        {"time": "7:20 – 8:00 pm", "players": [{"name": "Pujitha", "booked": False}, {"name": "Advaith", "booked": False}]},
-        {"time": "8:00 – 8:40 pm", "players": [{"name": "Praneeth", "booked": False}, {"name": "Hasini", "booked": False}]},
+        {"time": "6:40 – 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "7:20 – 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "8:00 – 8:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
     ],
     "thursday": [
-        {"time": "6:40 – 7:20 pm", "players": [{"name": "Akhil", "booked": False}, {"name": "Sumedh", "booked": False}]},
-        {"time": "7:20 – 8:00 pm", "players": [{"name": "Pujitha", "booked": False}, {"name": "Advaith", "booked": False}]},
-        {"time": "8:00 – 8:40 pm", "players": [{"name": "Praneeth", "booked": False}, {"name": "Hasini", "booked": False}]},
+        {"time": "6:00 – 6:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "6:40 – 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "7:20 – 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
     ],
 }
 
 def load_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r') as f:
-            return json.load(f)
+    if rdb:
+        val = rdb.get(REDIS_KEY)
+        if val:
+            return json.loads(val)
     return json.loads(json.dumps(DEFAULT_DATA))
 
 def save_data(data):
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f)
+    if rdb:
+        rdb.set(REDIS_KEY, json.dumps(data))
 
 @app.route('/')
 def index():
@@ -45,6 +48,10 @@ def manifest():
 def sw():
     return send_from_directory('public', 'sw.js')
 
+@app.route('/icon-192.svg')
+def icon():
+    return send_from_directory('public', 'icon-192.svg')
+
 @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
     return jsonify(load_data())
@@ -57,8 +64,7 @@ def update_bookings():
 
 @app.route('/api/reset', methods=['POST'])
 def reset():
-    d = json.loads(json.dumps(DEFAULT_DATA))
-    save_data(d)
+    save_data(json.loads(json.dumps(DEFAULT_DATA)))
     return jsonify({"ok": True})
 
 if __name__ == '__main__':
