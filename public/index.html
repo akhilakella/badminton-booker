@@ -288,9 +288,9 @@
   </div>
 
   <div class="day-tabs">
-    <button class="day-tab" onclick="setDay('monday',this)">Monday</button>
-    <button class="day-tab" onclick="setDay('wednesday',this)">Wednesday</button>
-    <button class="day-tab active" onclick="setDay('thursday',this)">Thursday</button>
+    <button class="day-tab" data-day="monday" onclick="setDay('monday',this)">Monday</button>
+    <button class="day-tab" data-day="wednesday" onclick="setDay('wednesday',this)">Wednesday</button>
+    <button class="day-tab active" data-day="thursday" onclick="setDay('thursday',this)">Thursday</button>
   </div>
 
   <div class="slots" id="slots">
@@ -356,11 +356,51 @@ async function saveData() {
   } catch(e) { console.error('Save failed', e); }
 }
 
+function ordinal(n) {
+  const s = ['th','st','nd','rd'], v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
+}
+
+function formatDate(date) {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${days[date.getDay()]} ${ordinal(date.getDate())} ${months[date.getMonth()]}`;
+}
+
+function updateTabDates() {
+  ['monday','wednesday','thursday'].forEach(day => {
+    const date = getNextDay(day);
+    const btn = document.querySelector(`[data-day="${day}"]`);
+    if (btn) {
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      btn.innerHTML = `${day.charAt(0).toUpperCase()+day.slice(1)}<span style="display:block;font-size:11px;opacity:0.7;margin-top:1px">${ordinal(date.getDate())} ${months[date.getMonth()]}</span>`;
+    }
+  });
+}
+
+function checkAutoReset() {
+  const lastReset = localStorage.getItem('lastResetWeek');
+  const now = new Date();
+  const weekKey = `${now.getFullYear()}-W${getWeekNumber(now)}`;
+  if (lastReset !== weekKey) {
+    fetch('/api/reset', {method:'POST'}).then(() => {
+      localStorage.setItem('lastResetWeek', weekKey);
+      loadData();
+    });
+  }
+}
+
+function getWeekNumber(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+}
+
 function setDay(day, el) {
   currentDay = day;
   document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('nav-day').textContent = day.charAt(0).toUpperCase() + day.slice(1);
   render();
 }
 
@@ -372,7 +412,8 @@ function render() {
 
   // Update nav date
   const nextDate = getNextDay(currentDay);
-  document.getElementById('nav-date').textContent = nextDate.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  document.getElementById('nav-day').textContent = formatDate(nextDate);
+  document.getElementById('nav-date').textContent = 'Queen\'s Diamond Jubilee Centre';
 
   slots.forEach((slot, i) => {
     const bookedCount = slot.players.filter(p=>p.booked).length;
@@ -411,10 +452,6 @@ function render() {
       </div>
       <div class="slot-players">${playersHTML}</div>
       <div class="slot-footer">
-        <button class="slot-action primary" onclick="bookAll(${i})">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Book on Better
-        </button>
         <button class="slot-action" onclick="openModal(${i})">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Edit players
@@ -430,15 +467,6 @@ function togglePlayer(slotIdx, playerIdx) {
   render();
   const p = state[currentDay][slotIdx].players[playerIdx];
   showToast(p.booked ? `${p.name} marked as booked` : `${p.name} marked as pending`);
-}
-
-function bookAll(slotIdx) {
-  const slot = state[currentDay][slotIdx];
-  const date = getNextDay(currentDay);
-  const dateStr = date.toISOString().split('T')[0];
-  const url = `https://www.better.org.uk/leisure-centre/rugby/queens-diamond-jubilee-centre/badminton?date=${dateStr}`;
-  window.open(url, '_blank');
-  showToast('Opening Better booking page...');
 }
 
 function getNextDay(dayName) {
@@ -499,6 +527,18 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
 
+async function loadData() {
+  try {
+    const r = await fetch('/api/bookings');
+    state = await r.json();
+    updateTabDates();
+    render();
+  } catch(e) {
+    document.getElementById('slots').innerHTML = '<div class="loading">Couldn\'t load bookings. Check connection.</div>';
+  }
+}
+
+checkAutoReset();
 loadData();
 </script>
 </body>
