@@ -40,7 +40,6 @@
       overscroll-behavior: none;
     }
 
-    /* grid bg */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -53,32 +52,19 @@
 
     .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 16px calc(80px + var(--safe-bot)); }
 
-    /* HEADER */
     .topbar {
       padding: calc(var(--safe-top) + 20px) 0 16px;
       display: flex; align-items: flex-end; justify-content: space-between;
     }
-    .topbar-left {}
-    .venue-tag {
-      font-size: 11px; font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 4px;
-    }
-    .app-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 38px; line-height: 1; letter-spacing: 1px; color: var(--text);
-    }
+    .venue-tag { font-size: 11px; font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .app-title { font-family: 'Bebas Neue', sans-serif; font-size: 38px; line-height: 1; letter-spacing: 1px; color: var(--text); }
     .app-title span { color: var(--accent); }
-    .shuttle {
-      font-size: 32px;
-      animation: float 3s ease-in-out infinite;
-      display: block;
-    }
+    .shuttle { font-size: 32px; animation: float 3s ease-in-out infinite; display: block; }
     @keyframes float {
       0%,100% { transform: translateY(0) rotate(-8deg); }
       50% { transform: translateY(-6px) rotate(8deg); }
     }
 
-    /* DAY TABS */
     .day-tabs {
       display: flex; gap: 8px; margin: 16px 0 20px;
       overflow-x: auto; -webkit-overflow-scrolling: touch;
@@ -86,68 +72,38 @@
     }
     .day-tabs::-webkit-scrollbar { display: none; }
     .day-tab {
-      flex-shrink: 0;
-      padding: 8px 20px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px; font-weight: 400;
-      color: var(--muted);
-      background: transparent; cursor: pointer;
-      transition: all 0.18s;
+      flex-shrink: 0; padding: 8px 20px; border-radius: 20px;
+      border: 1px solid var(--border); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 400; color: var(--muted);
+      background: transparent; cursor: pointer; transition: all 0.18s;
     }
     .day-tab:active { transform: scale(0.96); }
-    .day-tab.active {
-      background: var(--accent-dim);
-      border-color: rgba(200,241,53,0.3);
-      color: var(--accent);
-      font-weight: 500;
-    }
+    .day-tab.active { background: var(--accent-dim); border-color: rgba(200,241,53,0.3); color: var(--accent); font-weight: 500; }
 
-    /* SLOT CARDS */
     .slots { display: flex; flex-direction: column; gap: 12px; }
 
     .slot-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      overflow: hidden;
-      transition: border-color 0.2s;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; overflow: hidden; transition: border-color 0.2s;
     }
     .slot-card.all-booked { border-color: rgba(29,158,117,0.25); }
 
-    .slot-top {
-      padding: 16px 16px 12px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-
-    .slot-time-wrap {}
+    .slot-top { padding: 16px 16px 12px; display: flex; align-items: center; justify-content: space-between; }
     .slot-label { font-size: 11px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
     .slot-time { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; color: var(--text); line-height: 1; }
 
-    .slot-status {
-      font-size: 11px; font-weight: 500; padding: 4px 12px;
-      border-radius: 20px; letter-spacing: 0.3px;
-    }
+    .slot-status { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.3px; }
     .slot-status.all { background: var(--success-dim); color: var(--success); }
     .slot-status.partial { background: var(--warn-dim); color: var(--warn); }
     .slot-status.none { background: rgba(255,255,255,0.05); color: var(--muted); }
 
-    .slot-players {
-      padding: 0 16px 14px;
-      display: flex; gap: 8px;
-    }
+    .slot-players { padding: 0 16px 14px; display: flex; gap: 8px; }
 
     .player {
-      flex: 1;
-      background: var(--card2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
+      flex: 1; background: var(--card2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 12px;
       display: flex; align-items: center; gap: 10px;
-      cursor: pointer;
-      transition: all 0.15s;
-      user-select: none;
+      cursor: pointer; transition: all 0.15s; user-select: none;
     }
     .player:active { transform: scale(0.97); }
     .player.booked { border-color: rgba(29,158,117,0.3); background: rgba(29,158,117,0.06); }
@@ -168,64 +124,51 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; transition: all 0.15s;
     }
-    .player.booked .check-icon {
-      background: var(--success);
-      border-color: var(--success);
-    }
+    .player.booked .check-icon { background: var(--success); border-color: var(--success); }
     .check-icon svg { display: none; }
     .player.booked .check-icon svg { display: block; }
 
-    .slot-footer {
-      border-top: 1px solid var(--border);
-      display: flex;
+    .court-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(200,241,53,0.1); border: 1px solid rgba(200,241,53,0.25);
+      border-radius: 8px; padding: 4px 10px; margin: 0 16px 12px;
+      font-size: 12px; color: var(--accent); font-weight: 500;
     }
+
+    .slot-footer { border-top: 1px solid var(--border); display: flex; }
     .slot-action {
-      flex: 1; padding: 12px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px; font-weight: 400;
-      color: var(--muted); background: transparent;
-      border: none; cursor: pointer;
-      transition: all 0.15s;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
+      flex: 1; padding: 12px; font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 400; color: var(--muted);
+      background: transparent; border: none; cursor: pointer;
+      transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px;
     }
     .slot-action:active { background: rgba(255,255,255,0.04); }
-    .slot-action + .slot-action { border-left: 1px solid var(--border); }
-    .slot-action.primary { color: var(--accent); }
 
-    /* BOTTOM NAV */
     .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
+      position: fixed; bottom: 0; left: 0; right: 0;
       padding: 12px 16px calc(12px + var(--safe-bot));
       background: rgba(15,15,19,0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      z-index: 50;
+      display: flex; align-items: center; justify-content: space-between; z-index: 50;
     }
     .nav-info { font-size: 12px; color: var(--muted); line-height: 1.5; }
-    .nav-info strong { color: var(--text); font-weight: 500; }
+    .nav-info strong { color: var(--text); font-weight: 500; font-size: 13px; }
     .reset-btn {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px; color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted);
       background: transparent; border: 1px solid var(--border);
-      border-radius: 8px; padding: 6px 12px; cursor: pointer;
-      transition: all 0.15s;
+      border-radius: 8px; padding: 6px 12px; cursor: pointer; transition: all 0.15s;
     }
     .reset-btn:active { background: rgba(255,255,255,0.05); }
 
-    /* MODAL */
     .modal-bg {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(4px);
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
       z-index: 100; align-items: flex-end; justify-content: center;
     }
     .modal-bg.open { display: flex; }
     .modal {
-      background: var(--card);
-      border: 1px solid var(--border2);
+      background: var(--card); border: 1px solid var(--border2);
       border-radius: 24px 24px 0 0;
       padding: 24px 20px calc(24px + var(--safe-bot));
       width: 100%; max-width: 480px;
@@ -239,28 +182,39 @@
     .modal h3 { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
     .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
     .modal-field { margin-bottom: 14px; }
-    .modal-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.3px; }
+    .modal-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
     .modal-field input {
-      width: 100%; background: var(--card2);
-      border: 1px solid var(--border2);
-      border-radius: 10px; color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px; padding: 12px 14px; outline: none;
-      transition: border-color 0.15s;
+      width: 100%; background: var(--card2); border: 1px solid var(--border2);
+      border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; padding: 12px 14px; outline: none; transition: border-color 0.15s;
     }
     .modal-field input:focus { border-color: rgba(200,241,53,0.4); }
     .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
     .modal-btn {
-      flex: 1; padding: 14px;
-      border-radius: 12px; border: 1px solid var(--border2);
-      font-family: 'DM Sans', sans-serif; font-size: 15px;
-      cursor: pointer; transition: all 0.15s;
+      flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border2);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.15s;
     }
     .modal-btn.cancel { background: transparent; color: var(--muted); }
     .modal-btn.save { background: var(--accent); color: #0f0f13; font-weight: 500; border-color: var(--accent); }
     .modal-btn:active { transform: scale(0.98); }
 
-    /* TOAST */
+    .court-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 4px; }
+    .court-btn {
+      background: var(--card2); border: 1px solid var(--border2);
+      border-radius: 12px; color: var(--muted);
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+      padding: 16px 8px; cursor: pointer; text-align: center; transition: all 0.15s;
+    }
+    .court-btn:active { transform: scale(0.95); }
+    .court-btn.selected { background: var(--accent-dim); border-color: rgba(200,241,53,0.4); color: var(--accent); }
+    .court-skip {
+      width: 100%; padding: 12px; background: transparent;
+      border: 1px solid var(--border); border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--muted); cursor: pointer; margin-top: 10px; transition: all 0.15s;
+    }
+    .court-skip:active { background: rgba(255,255,255,0.04); }
+
     .toast {
       position: fixed; bottom: calc(80px + var(--safe-bot) + 12px);
       left: 50%; transform: translateX(-50%) translateY(10px);
@@ -271,8 +225,6 @@
       pointer-events: none; white-space: nowrap; z-index: 200;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* LOADING */
     .loading { text-align: center; padding: 40px 0; color: var(--muted); font-size: 14px; }
   </style>
 </head>
@@ -301,11 +253,12 @@
 <div class="bottom-nav">
   <div class="nav-info">
     <strong id="nav-day">Thursday</strong><br>
-    <span id="nav-date">loading...</span>
+    <span id="nav-date">Queen's Diamond Jubilee Centre</span>
   </div>
   <button class="reset-btn" onclick="confirmReset()">Reset week</button>
 </div>
 
+<!-- Edit Players Modal -->
 <div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -317,6 +270,22 @@
       <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
       <button class="modal-btn save" onclick="saveModal()">Save</button>
     </div>
+  </div>
+</div>
+
+<!-- Court Number Modal -->
+<div class="modal-bg" id="court-modal-bg" onclick="closeCourtModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Which court?</h3>
+    <p id="court-modal-sub">Select your court number</p>
+    <div class="court-grid">
+      <button class="court-btn" onclick="selectCourt(1)">1</button>
+      <button class="court-btn" onclick="selectCourt(2)">2</button>
+      <button class="court-btn" onclick="selectCourt(3)">3</button>
+      <button class="court-btn" onclick="selectCourt(4)">4</button>
+    </div>
+    <button class="court-skip" onclick="selectCourt(null)">Skip — don't know yet</button>
   </div>
 </div>
 
@@ -335,11 +304,14 @@ function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2
 let state = null;
 let currentDay = 'thursday';
 let editingSlot = null;
+let pendingCourtSlot = null;
+let pendingCourtPlayer = null;
 
 async function loadData() {
   try {
     const r = await fetch('/api/bookings');
     state = await r.json();
+    updateTabDates();
     render();
   } catch(e) {
     document.getElementById('slots').innerHTML = '<div class="loading">Couldn\'t load bookings. Check connection.</div>';
@@ -404,16 +376,26 @@ function setDay(day, el) {
   render();
 }
 
+function getNextDay(dayName) {
+  const days = {sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
+  const today = new Date();
+  const target = days[dayName];
+  const current = today.getDay();
+  let diff = target - current;
+  if (diff <= 0) diff += 7;
+  const next = new Date(today);
+  next.setDate(today.getDate() + diff);
+  return next;
+}
+
 function render() {
   if (!state) return;
   const slots = state[currentDay];
   const container = document.getElementById('slots');
   container.innerHTML = '';
 
-  // Update nav date
   const nextDate = getNextDay(currentDay);
   document.getElementById('nav-day').textContent = formatDate(nextDate);
-  document.getElementById('nav-date').textContent = 'Queen\'s Diamond Jubilee Centre';
 
   slots.forEach((slot, i) => {
     const bookedCount = slot.players.filter(p=>p.booked).length;
@@ -428,11 +410,12 @@ function render() {
 
     const playersHTML = slot.players.map((p, pi) => {
       const c = color(p.name);
+      const courtLabel = p.booked && p.court ? `Court ${p.court}` : p.booked ? 'Booked' : 'Pending';
       return `<div class="player${p.booked?' booked':''}" onclick="togglePlayer(${i},${pi})">
         <div class="avatar" style="background:${c}22;color:${c}">${initials(p.name)}</div>
         <div class="player-info">
           <div class="player-name">${p.name}</div>
-          <div class="player-status">${p.booked ? 'Booked' : 'Pending'}</div>
+          <div class="player-status">${courtLabel}</div>
         </div>
         <div class="check-icon">
           <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
@@ -441,6 +424,20 @@ function render() {
         </div>
       </div>`;
     }).join('');
+
+    const courts = slot.players.filter(p=>p.booked && p.court).map(p=>p.court);
+    const uniqueCourts = [...new Set(courts)];
+    let courtBadgeHTML = '';
+    if (uniqueCourts.length === 1 && courts.length === slot.players.length) {
+      courtBadgeHTML = `<div class="court-badge">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>
+        Court ${uniqueCourts[0]}
+      </div>`;
+    } else if (uniqueCourts.length > 1) {
+      courtBadgeHTML = `<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">
+        Courts ${uniqueCourts.join(' & ')}
+      </div>`;
+    }
 
     card.innerHTML = `
       <div class="slot-top">
@@ -451,6 +448,7 @@ function render() {
         <div class="slot-status ${statusClass}">${statusText}</div>
       </div>
       <div class="slot-players">${playersHTML}</div>
+      ${courtBadgeHTML}
       <div class="slot-footer">
         <button class="slot-action" onclick="openModal(${i})">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -462,23 +460,41 @@ function render() {
 }
 
 function togglePlayer(slotIdx, playerIdx) {
-  state[currentDay][slotIdx].players[playerIdx].booked ^= true;
-  saveData();
-  render();
   const p = state[currentDay][slotIdx].players[playerIdx];
-  showToast(p.booked ? `${p.name} marked as booked` : `${p.name} marked as pending`);
+  if (!p.booked) {
+    pendingCourtSlot = slotIdx;
+    pendingCourtPlayer = playerIdx;
+    const slot = state[currentDay][slotIdx];
+    document.getElementById('court-modal-sub').textContent = `${p.name} · ${slot.time}`;
+    document.querySelectorAll('.court-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('court-modal-bg').classList.add('open');
+  } else {
+    p.booked = false;
+    p.court = null;
+    saveData();
+    render();
+    showToast(`${p.name} marked as pending`);
+  }
 }
 
-function getNextDay(dayName) {
-  const days = {sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
-  const today = new Date();
-  const target = days[dayName];
-  const current = today.getDay();
-  let diff = target - current;
-  if (diff <= 0) diff += 7;
-  const next = new Date(today);
-  next.setDate(today.getDate() + diff);
-  return next;
+function selectCourt(courtNum) {
+  const p = state[currentDay][pendingCourtSlot].players[pendingCourtPlayer];
+  p.booked = true;
+  p.court = courtNum;
+  document.getElementById('court-modal-bg').classList.remove('open');
+  saveData();
+  render();
+  const msg = courtNum ? `${p.name} booked — Court ${courtNum}` : `${p.name} marked as booked`;
+  showToast(msg);
+  pendingCourtSlot = null;
+  pendingCourtPlayer = null;
+}
+
+function closeCourtModal(e) {
+  if (e && e.target !== document.getElementById('court-modal-bg')) return;
+  document.getElementById('court-modal-bg').classList.remove('open');
+  pendingCourtSlot = null;
+  pendingCourtPlayer = null;
 }
 
 function openModal(slotIdx) {
@@ -500,8 +516,8 @@ function saveModal() {
   const p1 = document.getElementById('inp1').value.trim();
   const p2 = document.getElementById('inp2').value.trim();
   const slot = state[currentDay][editingSlot];
-  if (p1) slot.players[0] = {name:p1, booked: slot.players[0]?.booked||false};
-  if (p2) slot.players[1] = {name:p2, booked: slot.players[1]?.booked||false};
+  if (p1) slot.players[0] = {name:p1, booked: slot.players[0]?.booked||false, court: slot.players[0]?.court||null};
+  if (p2) slot.players[1] = {name:p2, booked: slot.players[1]?.booked||false, court: slot.players[1]?.court||null};
   document.getElementById('modal-bg').classList.remove('open');
   editingSlot = null;
   saveData();
@@ -525,17 +541,6 @@ function showToast(msg) {
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
-}
-
-async function loadData() {
-  try {
-    const r = await fetch('/api/bookings');
-    state = await r.json();
-    updateTabDates();
-    render();
-  } catch(e) {
-    document.getElementById('slots').innerHTML = '<div class="loading">Couldn\'t load bookings. Check connection.</div>';
-  }
 }
 
 checkAutoReset();
