@@ -144,8 +144,8 @@
       <div style="font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:0.5px">Made by Akhil Akella</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">🌙</button>
-      <span class="shuttle">🏸</span>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">&#127769;</button>
+      <span class="shuttle">&#127992;</span>
     </div>
   </div>
   <div class="day-tabs">
@@ -181,7 +181,7 @@
       <div class="dropdown-wrap">
         <label>Your name</label>
         <select id="single-name">
-          <option value="">— select —</option>
+          <option value="">-- select --</option>
           <option>Akhil</option><option>Sumedh</option><option>Pujitha</option>
           <option>Advaith</option><option>Praneeth</option><option>Hasini</option><option>Kishika</option>
         </select>
@@ -189,7 +189,7 @@
       <div class="dropdown-wrap" style="max-width:120px">
         <label>Court</label>
         <select id="single-court">
-          <option value="">—</option>
+          <option value="">--</option>
           <option value="1">Court 1</option><option value="2">Court 2</option>
           <option value="3">Court 3</option><option value="4">Court 4</option>
         </select>
@@ -216,6 +216,7 @@ const ATT_MEMBERS = [
   {name:'Niranjan', color:'#85B7EB'},
   {name:'Mohan', color:'#F0997B'},
   {name:'Sainath', color:'#97C459'},
+  {name:'Pavan', color:'#FAC775'},
 ];
 const COLORS = ['#5DCAA5','#AFA9EC','#85B7EB','#F0997B','#97C459','#FAC775','#F5C4B3'];
 const nameColors = {};
@@ -224,9 +225,9 @@ function color(name) { return nameColors[name] || '#555'; }
 function initials(name) { return name ? name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '+'; }
 
 const SLOTS = {
-  monday:    ['6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm','8:00 \u2013 8:40 pm'],
-  wednesday: ['6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm','8:00 \u2013 8:40 pm'],
-  thursday:  ['6:00 \u2013 6:40 pm','6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm'],
+  monday:    ['6:40 - 7:20 pm','7:20 - 8:00 pm','8:00 - 8:40 pm'],
+  wednesday: ['6:40 - 7:20 pm','7:20 - 8:00 pm','8:00 - 8:40 pm'],
+  thursday:  ['6:00 - 6:40 pm','6:40 - 7:20 pm','7:20 - 8:00 pm'],
 };
 
 function makeDefaultState() {
@@ -545,7 +546,7 @@ function openSingleModal(slotIdx, playerIdx) {
   const slot = state[currentDay][slotIdx];
   const p = slot.players[playerIdx];
   const label = playerIdx === 0 ? 'Player 1' : 'Player 2';
-  document.getElementById('single-modal-title').textContent = label + ' \u00b7 ' + slot.time;
+  document.getElementById('single-modal-title').textContent = label + ' - ' + slot.time;
   document.getElementById('single-modal-sub').textContent = 'Select name and court number';
   document.getElementById('single-name').value = p.name || '';
   document.getElementById('single-court').value = p.court || '';
@@ -595,7 +596,7 @@ function shareWhatsApp() {
   const date = getNextDay(currentDay);
   const dayLabel = formatDate(date);
   const slots = state[currentDay];
-  let msg = '\uD83C\uDFF8 *Court Booker - ' + dayLabel + '*\n';
+  let msg = '&#127992; *Court Booker - ' + dayLabel + '*\n';
   msg += "Queen's Diamond Jubilee Centre\n\n";
   slots.forEach(slot => {
     msg += '*' + slot.time + '*\n';
@@ -612,7 +613,7 @@ function shareWhatsApp() {
 
 function shareWeekWhatsApp() {
   if (!state) return;
-  let msg = "\uD83C\uDFF8 *Court Booker - This Week*\n";
+  let msg = "&#127992; *Court Booker - This Week*\n";
   msg += "Queen's Diamond Jubilee Centre\n\n";
   ['monday','wednesday','thursday'].forEach(day => {
     const date = getNextDay(day);
