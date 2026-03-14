@@ -4,7 +4,7 @@ import json, os, redis
 
 app = Flask(__name__, static_folder='public')
 app.config['SECRET_KEY'] = 'courtbooker2024'
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 REDIS_URL = os.environ.get('REDIS_URL')
 rdb = redis.from_url(REDIS_URL) if REDIS_URL else None
@@ -73,10 +73,7 @@ def update_player():
     data = load_data()
     data[day][slot_idx]['players'][player_idx] = player
     save_data(data)
-
-    # Broadcast to all connected clients instantly
     socketio.emit('bookings_updated', data)
-
     return jsonify({"ok": True, "data": data})
 
 @app.route('/api/bookings', methods=['POST'])
