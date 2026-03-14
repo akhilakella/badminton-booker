@@ -225,9 +225,9 @@ function color(name) { return nameColors[name] || '#555'; }
 function initials(name) { return name ? name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '+'; }
 
 const SLOTS = {
-  monday:    ['6:40 - 7:20 pm','7:20 - 8:00 pm','8:00 - 8:40 pm'],
-  wednesday: ['6:40 - 7:20 pm','7:20 - 8:00 pm','8:00 - 8:40 pm'],
-  thursday:  ['6:00 - 6:40 pm','6:40 - 7:20 pm','7:20 - 8:00 pm'],
+  monday:    ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
+  wednesday: ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
+  thursday:  ['6:00 – 6:40 pm','6:40 – 7:20 pm','7:20 – 8:00 pm'],
 };
 
 function makeDefaultState() {
