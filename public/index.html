@@ -11,6 +11,7 @@
   <link rel="apple-touch-icon" href="/icon-192.svg"/>
   <title>Court Booker</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
   <style>
     :root {
       --bg: #0f0f13; --card: #17171f; --card2: #1e1e28;
@@ -583,11 +584,11 @@ initTheme();
 checkAutoReset();
 loadData();
 
-setInterval(async () => {
-  const r = await fetch('/api/bookings');
-  state = await r.json();
+const socket = io();
+socket.on('bookings_updated', (data) => {
+  state = data;
   if (weekView) { renderWeek(); } else { render(); }
-}, 30000);
+});
 </script>
 </body>
 </html>
