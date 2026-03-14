@@ -582,6 +582,12 @@ if ('serviceWorker' in navigator) {
 initTheme();
 checkAutoReset();
 loadData();
+
+setInterval(async () => {
+  const r = await fetch('/api/bookings');
+  state = await r.json();
+  if (weekView) { renderWeek(); } else { render(); }
+}, 30000);
 </script>
 </body>
 </html>
