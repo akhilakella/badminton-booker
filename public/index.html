@@ -566,9 +566,8 @@ function saveSingleModal() {
   document.getElementById('single-modal-bg').classList.remove('open');
   const savedSlot = editingSlot; const savedPlayer = editingPlayer; const savedDay = currentDay;
   editingSlot = null; editingPlayer = null;
-  savePlayer(savedDay, savedSlot, savedPlayer).then(() => {
-    if (weekView) { renderWeek(); } else { render(); }
-  });
+  if (weekView) { renderWeek(); } else { render(); }
+  savePlayer(savedDay, savedSlot, savedPlayer);
   const msg = p.booked ? name + ' booked - Court ' + court : name ? name + ' assigned' : 'Slot cleared';
   showToast(msg);
 }
@@ -579,9 +578,8 @@ function clearSinglePlayer() {
   document.getElementById('single-modal-bg').classList.remove('open');
   const savedSlot = editingSlot; const savedPlayer = editingPlayer; const savedDay = currentDay;
   editingSlot = null; editingPlayer = null;
-  savePlayer(savedDay, savedSlot, savedPlayer).then(() => {
-    if (weekView) { renderWeek(); } else { render(); }
-  });
+  if (weekView) { renderWeek(); } else { render(); }
+  savePlayer(savedDay, savedSlot, savedPlayer);
   showToast('Spot cleared');
 }
 
