@@ -32,9 +32,4 @@ Open URL → 3-dot menu → Add to Home Screen → Install
 **iPhone (Safari):**
 Open URL → Share button → Add to Home Screen → Add
 
-## Group
-- 6:40 – 7:20 pm → Akhil & Sumedh
-- 7:20 – 8:00 pm → Pujitha & Advaith
-- 8:00 – 8:40 pm → Praneeth & Hasini
-
 Days: Monday, Wednesday, Thursday
