@@ -1,10 +1,7 @@
 from flask import Flask, send_from_directory, jsonify, request
-from flask_socketio import SocketIO, emit
 import json, os, redis
 
 app = Flask(__name__, static_folder='public')
-app.config['SECRET_KEY'] = 'courtbooker2024'
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 REDIS_URL = os.environ.get('REDIS_URL')
 rdb = redis.from_url(REDIS_URL) if REDIS_URL else None
@@ -30,9 +27,9 @@ DEFAULT_DATA = {
 }
 
 DEFAULT_ATT = {
-    "monday":    {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False},
-    "wednesday": {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False},
-    "thursday":  {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False},
+    "monday":    {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False, "Pavan": False},
+    "wednesday": {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False, "Pavan": False},
+    "thursday":  {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False, "Pavan": False},
 }
 
 def load_data():
@@ -89,21 +86,17 @@ def update_player():
     data = load_data()
     data[day][slot_idx]['players'][player_idx] = player
     save_data(data)
-    socketio.emit('bookings_updated', data)
     return jsonify({"ok": True, "data": data})
 
 @app.route('/api/bookings', methods=['POST'])
 def update_bookings():
     data = request.get_json()
     save_data(data)
-    socketio.emit('bookings_updated', data)
     return jsonify({"ok": True})
 
 @app.route('/api/reset', methods=['POST'])
 def reset():
-    data = json.loads(json.dumps(DEFAULT_DATA))
-    save_data(data)
-    socketio.emit('bookings_updated', data)
+    save_data(json.loads(json.dumps(DEFAULT_DATA)))
     return jsonify({"ok": True})
 
 @app.route('/api/attendance', methods=['GET'])
@@ -121,14 +114,8 @@ def update_attendance():
         att[day] = {}
     att[day][name] = present
     save_att(att)
-    socketio.emit('attendance_updated', att)
-    return jsonify({"ok": True, "data": att})
-
-@socketio.on('connect')
-def on_connect():
-    emit('bookings_updated', load_data())
-    emit('attendance_updated', load_att())
+    return jsonify({"ok": True})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port)
