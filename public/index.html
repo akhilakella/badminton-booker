@@ -262,6 +262,21 @@ async function saveData() {
   } catch(e) { console.error('Save failed', e); }
 }
 
+async function savePlayer(day, slotIdx, playerIdx) {
+  try {
+    const player = state[day][slotIdx].players[playerIdx];
+    const res = await fetch('/api/update-player', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ day, slotIdx, playerIdx, player })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      state = data.data;
+    }
+  } catch(e) { console.error('Save player failed', e); }
+}
+
 function ordinal(n) {
   const s = ['th','st','nd','rd'], v = n % 100;
   return n + (s[(v-20)%10] || s[v] || s[0]);
@@ -405,8 +420,11 @@ function saveSingleModal() {
   p.court = court || null;
   p.booked = name !== '' && court !== '';
   document.getElementById('single-modal-bg').classList.remove('open');
+  const savedSlot = editingSlot; const savedPlayer = editingPlayer; const savedDay = currentDay;
   editingSlot = null; editingPlayer = null;
-  saveData(); if (weekView) { renderWeek(); } else { render(); }
+  savePlayer(savedDay, savedSlot, savedPlayer).then(() => {
+    if (weekView) { renderWeek(); } else { render(); }
+  });
   const msg = p.booked ? name + ' booked - Court ' + court : name ? name + ' assigned' : 'Slot cleared';
   showToast(msg);
 }
@@ -415,8 +433,11 @@ function clearSinglePlayer() {
   const p = state[currentDay][editingSlot].players[editingPlayer];
   p.name = ''; p.booked = false; p.court = null;
   document.getElementById('single-modal-bg').classList.remove('open');
+  const savedSlot = editingSlot; const savedPlayer = editingPlayer; const savedDay = currentDay;
   editingSlot = null; editingPlayer = null;
-  saveData(); if (weekView) { renderWeek(); } else { render(); }
+  savePlayer(savedDay, savedSlot, savedPlayer).then(() => {
+    if (weekView) { renderWeek(); } else { render(); }
+  });
   showToast('Spot cleared');
 }
 
