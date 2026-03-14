@@ -110,6 +110,11 @@
     .toast { position: fixed; bottom: calc(80px + var(--safe-bot) + 12px); left: 50%; transform: translateX(-50%) translateY(10px); background: var(--card2); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 20px; font-size: 13px; color: var(--text); opacity: 0; transition: all 0.2s; pointer-events: none; white-space: nowrap; z-index: 200; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .loading { text-align: center; padding: 40px 0; color: var(--muted); font-size: 14px; }
+    .week-btn { flex-shrink: 0; padding: 8px 20px; border-radius: 20px; border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; color: var(--muted); background: transparent; cursor: pointer; transition: all 0.18s; }
+    .week-btn:active { transform: scale(0.96); }
+    .week-btn.active { background: rgba(133,183,235,0.12); border-color: rgba(133,183,235,0.3); color: #85B7EB; font-weight: 500; }
+    .week-day-header { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--text); margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .week-day-header span { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: 8px; vertical-align: middle; }
   </style>
 </head>
 <body>
@@ -127,6 +132,7 @@
     <button class="day-tab" data-day="monday" onclick="setDay('monday',this)">Monday</button>
     <button class="day-tab" data-day="wednesday" onclick="setDay('wednesday',this)">Wednesday</button>
     <button class="day-tab active" data-day="thursday" onclick="setDay('thursday',this)">Thursday</button>
+    <button class="week-btn" id="week-btn" onclick="setWeekView(this)">Week</button>
   </div>
   <div class="slots" id="slots"><div class="loading">Loading bookings...<br><span style="font-size:12px;opacity:0.5;margin-top:8px;display:block">Made by Akhil Akella</span></div></div>
   <button class="wa-btn" onclick="shareWhatsApp()">
@@ -211,6 +217,7 @@ function makeDefaultState() {
 let state = null;
 let currentDay = 'thursday';
 let editingSlot = null;
+let weekView = false;
 let editingPlayer = null;
 
 async function loadData() {
@@ -278,9 +285,22 @@ function getWeekNumber(d) {
 
 function setDay(day, el) {
   currentDay = day;
+  weekView = false;
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('week-btn').classList.remove('active');
+  el.classList.add('active');
+  document.getElementById('nav-day').textContent = formatDate(getNextDay(day));
+  document.querySelector('.wa-btn').onclick = shareWhatsApp;
+  render();
+}
+
+function setWeekView(el) {
+  weekView = true;
   document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  render();
+  document.getElementById('nav-day').textContent = 'This Week';
+  document.querySelector('.wa-btn').onclick = shareWeekWhatsApp;
+  renderWeek();
 }
 
 function getNextDay(dayName) {
@@ -407,6 +427,86 @@ function shareWhatsApp() {
       } else {
         msg += '➕ Empty slot\n';
       }
+    });
+    msg += '\n';
+  });
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function renderWeek() {
+  if (!state) return;
+  const container = document.getElementById('slots');
+  container.innerHTML = '';
+  ['monday','wednesday','thursday'].forEach(day => {
+    const date = getNextDay(day);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dateStr = ordinal(date.getDate()) + ' ' + months[date.getMonth()];
+    const header = document.createElement('div');
+    header.className = 'week-day-header';
+    header.innerHTML = day.charAt(0).toUpperCase()+day.slice(1) + '<span>' + dateStr + '</span>';
+    container.appendChild(header);
+
+    state[day].forEach((slot, i) => {
+      const bookedCount = slot.players.filter(p => p.booked && p.name).length;
+      const namedCount = slot.players.filter(p => p.name).length;
+      const allBooked = namedCount > 0 && bookedCount === namedCount;
+      const noneBooked = bookedCount === 0;
+      const statusClass = allBooked ? 'all' : noneBooked ? 'none' : 'partial';
+      const statusText = allBooked ? 'All booked' : noneBooked ? 'Not booked' : 'Partially booked';
+
+      const card = document.createElement('div');
+      card.className = 'slot-card' + (allBooked ? ' all-booked' : '');
+      card.style.marginBottom = '10px';
+
+      const playersHTML = slot.players.map((p, pi) => {
+        const hasName = !!p.name;
+        const c = hasName ? color(p.name) : '#3a3a4a';
+        const statusTxt = p.booked && p.court ? 'Court ' + p.court : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
+        return '<div class="player' + (p.booked?' booked':'') + (!hasName?' empty':'') + '" onclick="currentDay='' + day + '';openSingleModal(' + i + ',' + pi + ')">'
+          + '<div class="avatar" style="background:' + c + (hasName?'22':'44') + ';color:' + (hasName?c:'#555') + '">' + initials(p.name) + '</div>'
+          + '<div class="player-info">'
+          + '<div class="player-name" style="' + (!hasName?'color:var(--muted);font-weight:400':'') + '">' + (hasName ? p.name : 'Tap to assign') + '</div>'
+          + '<div class="player-status">' + statusTxt + '</div>'
+          + '</div>'
+          + '<div class="check-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+          + '</div>';
+      }).join('');
+
+      const courts = slot.players.filter(p=>p.booked&&p.court).map(p=>p.court);
+      const uniqueCourts = [...new Set(courts)];
+      let courtBadgeHTML = '';
+      if (uniqueCourts.length === 1 && courts.length >= 1) {
+        courtBadgeHTML = '<div class="court-badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>Court ' + uniqueCourts[0] + '</div>';
+      } else if (uniqueCourts.length > 1) {
+        courtBadgeHTML = '<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">Courts ' + uniqueCourts.join(' & ') + '</div>';
+      }
+
+      card.innerHTML = '<div class="slot-top"><div class="slot-time-wrap"><div class="slot-label">Court slot</div><div class="slot-time">' + slot.time + '</div></div><div class="slot-status ' + statusClass + '">' + statusText + '</div></div><div class="slot-players">' + playersHTML + '</div>' + courtBadgeHTML;
+      container.appendChild(card);
+    });
+  });
+}
+
+function shareWeekWhatsApp() {
+  if (!state) return;
+  let msg = "🏸 *Court Booker - This Week*\n";
+  msg += "Queen's Diamond Jubilee Centre\n\n";
+  ['monday','wednesday','thursday'].forEach(day => {
+    const date = getNextDay(day);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dateStr = ordinal(date.getDate()) + ' ' + months[date.getMonth()];
+    msg += '*' + day.charAt(0).toUpperCase()+day.slice(1) + ' ' + dateStr + '*\n';
+    state[day].forEach(slot => {
+      msg += '_' + slot.time + '_\n';
+      slot.players.forEach(p => {
+        if (p.name) {
+          const courtTxt = p.court ? ' - Court ' + p.court : ' - not booked yet';
+          const tick = p.booked ? '✅' : '⏳';
+          msg += tick + ' ' + p.name + courtTxt + '\n';
+        } else {
+          msg += '➕ Empty slot\n';
+        }
+      });
     });
     msg += '\n';
   });
