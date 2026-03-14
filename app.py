@@ -9,23 +9,30 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 REDIS_URL = os.environ.get('REDIS_URL')
 rdb = redis.from_url(REDIS_URL) if REDIS_URL else None
 REDIS_KEY = 'courtbooker:bookings'
+ATT_KEY = 'courtbooker:attendance'
 
 DEFAULT_DATA = {
     "monday": [
-        {"time": "6:40 – 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
-        {"time": "7:20 – 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
-        {"time": "8:00 – 8:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "6:40 \u2013 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "7:20 \u2013 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "8:00 \u2013 8:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
     ],
     "wednesday": [
-        {"time": "6:40 – 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
-        {"time": "7:20 – 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
-        {"time": "8:00 – 8:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "6:40 \u2013 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "7:20 \u2013 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "8:00 \u2013 8:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
     ],
     "thursday": [
-        {"time": "6:00 – 6:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
-        {"time": "6:40 – 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
-        {"time": "7:20 – 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "6:00 \u2013 6:40 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "6:40 \u2013 7:20 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
+        {"time": "7:20 \u2013 8:00 pm", "players": [{"name": "", "booked": False, "court": None}, {"name": "", "booked": False, "court": None}]},
     ],
+}
+
+DEFAULT_ATT = {
+    "monday":    {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False},
+    "wednesday": {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False},
+    "thursday":  {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False},
 }
 
 def load_data():
@@ -38,6 +45,17 @@ def load_data():
 def save_data(data):
     if rdb:
         rdb.set(REDIS_KEY, json.dumps(data))
+
+def load_att():
+    if rdb:
+        val = rdb.get(ATT_KEY)
+        if val:
+            return json.loads(val)
+    return json.loads(json.dumps(DEFAULT_ATT))
+
+def save_att(data):
+    if rdb:
+        rdb.set(ATT_KEY, json.dumps(data))
 
 @app.route('/')
 def index():
@@ -66,10 +84,8 @@ def update_player():
     slot_idx = body.get('slotIdx')
     player_idx = body.get('playerIdx')
     player = body.get('player')
-
     if day not in DEFAULT_DATA or slot_idx is None or player_idx is None:
         return jsonify({"ok": False, "error": "Invalid request"}), 400
-
     data = load_data()
     data[day][slot_idx]['players'][player_idx] = player
     save_data(data)
@@ -90,9 +106,28 @@ def reset():
     socketio.emit('bookings_updated', data)
     return jsonify({"ok": True})
 
+@app.route('/api/attendance', methods=['GET'])
+def get_attendance():
+    return jsonify(load_att())
+
+@app.route('/api/attendance', methods=['POST'])
+def update_attendance():
+    body = request.get_json()
+    day = body.get('day')
+    name = body.get('name')
+    present = body.get('present')
+    att = load_att()
+    if day not in att:
+        att[day] = {}
+    att[day][name] = present
+    save_att(att)
+    socketio.emit('attendance_updated', att)
+    return jsonify({"ok": True, "data": att})
+
 @socketio.on('connect')
 def on_connect():
     emit('bookings_updated', load_data())
+    emit('attendance_updated', load_att())
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
