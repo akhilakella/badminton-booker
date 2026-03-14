@@ -38,7 +38,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overscroll-behavior: none; }
     body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px); background-size: 36px 36px; pointer-events: none; z-index: 0; }
-
     .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 16px calc(80px + var(--safe-bot)); }
     .topbar { padding: calc(var(--safe-top) + 20px) 0 16px; display: flex; align-items: flex-end; justify-content: space-between; }
     .venue-tag { font-size: 11px; font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
@@ -46,13 +45,11 @@
     .app-title span { color: var(--accent); }
     .shuttle { font-size: 32px; animation: float 3s ease-in-out infinite; display: block; }
     @keyframes float { 0%,100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-6px) rotate(8deg); } }
-
     .day-tabs { display: flex; gap: 8px; margin: 16px 0 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
     .day-tabs::-webkit-scrollbar { display: none; }
     .day-tab { flex-shrink: 0; padding: 8px 20px; border-radius: 20px; border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; color: var(--muted); background: transparent; cursor: pointer; transition: all 0.18s; }
     .day-tab:active { transform: scale(0.96); }
     .day-tab.active { background: var(--accent-dim); border-color: rgba(200,241,53,0.3); color: var(--accent); font-weight: 500; }
-
     .slots { display: flex; flex-direction: column; gap: 12px; }
     .slot-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: border-color 0.2s; }
     .slot-card.all-booked { border-color: rgba(29,158,117,0.25); }
@@ -63,7 +60,6 @@
     .slot-status.all { background: var(--success-dim); color: var(--success); }
     .slot-status.partial { background: var(--warn-dim); color: var(--warn); }
     .slot-status.none { background: rgba(255,255,255,0.05); color: var(--muted); }
-
     .slot-players { padding: 0 16px 14px; display: flex; gap: 8px; }
     .player { flex: 1; background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.15s; user-select: none; }
     .player:active { transform: scale(0.97); }
@@ -78,18 +74,14 @@
     .player.booked .check-icon { background: var(--success); border-color: var(--success); }
     .check-icon svg { display: none; }
     .player.booked .check-icon svg { display: block; }
-
     .court-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(200,241,53,0.1); border: 1px solid rgba(200,241,53,0.25); border-radius: 8px; padding: 4px 10px; margin: 0 16px 12px; font-size: 12px; color: var(--accent); font-weight: 500; }
-
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px calc(12px + var(--safe-bot)); background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; z-index: 50; }
     .nav-info { font-size: 12px; color: var(--muted); line-height: 1.5; }
     .nav-info strong { color: var(--text); font-weight: 500; font-size: 13px; }
     .reset-btn { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; transition: all 0.15s; }
     .reset-btn:active { background: rgba(255,255,255,0.05); }
-
     .wa-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 20px; padding: 13px; border-radius: 14px; border: 1px solid rgba(37,211,102,0.3); background: rgba(37,211,102,0.08); color: #25d366; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
     .wa-btn:active { transform: scale(0.98); background: rgba(37,211,102,0.14); }
-
     .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; align-items: flex-end; justify-content: center; }
     .modal-bg.open { display: flex; }
     .modal { background: var(--card); border: 1px solid var(--border2); border-radius: 24px 24px 0 0; padding: 24px 20px calc(24px + var(--safe-bot)); width: 100%; max-width: 480px; animation: slideUp 0.25s ease; }
@@ -97,21 +89,12 @@
     .modal-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 0 auto 20px; }
     .modal h3 { font-size: 17px; font-weight: 500; margin-bottom: 4px; }
     .modal p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-
     .dropdown-row { display: flex; gap: 10px; margin-bottom: 16px; }
     .dropdown-wrap { flex: 1; }
     .dropdown-wrap label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    .dropdown-wrap select {
-      width: 100%; background: var(--card2); border: 1px solid var(--border2);
-      border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif;
-      font-size: 14px; padding: 12px 14px; outline: none; appearance: none; -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b80' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px center;
-      transition: border-color 0.15s; cursor: pointer;
-    }
+    .dropdown-wrap select { width: 100%; background: var(--card2); border: 1px solid var(--border2); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 12px 14px; outline: none; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b80' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; transition: border-color 0.15s; cursor: pointer; }
     .dropdown-wrap select:focus { border-color: rgba(200,241,53,0.4); }
     .dropdown-wrap select option { background: #17171f; color: var(--text); }
-
     .modal-btns { display: flex; gap: 10px; margin-top: 4px; }
     .modal-btn { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border2); font-family: 'DM Sans', sans-serif; font-size: 15px; cursor: pointer; transition: all 0.15s; }
     .modal-btn.cancel { background: transparent; color: var(--muted); }
@@ -119,7 +102,6 @@
     .modal-btn.danger { background: transparent; color: #ff5555; border-color: rgba(255,85,85,0.3); }
     .modal-btn:active { transform: scale(0.98); }
     .modal-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-
     .toast { position: fixed; bottom: calc(80px + var(--safe-bot) + 12px); left: 50%; transform: translateX(-50%) translateY(10px); background: var(--card2); border: 1px solid var(--border2); border-radius: 20px; padding: 10px 20px; font-size: 13px; color: var(--text); opacity: 0; transition: all 0.2s; pointer-events: none; white-space: nowrap; z-index: 200; }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .loading { text-align: center; padding: 40px 0; color: var(--muted); font-size: 14px; }
@@ -130,6 +112,26 @@
     .week-btn.active { background: rgba(133,183,235,0.12); border-color: rgba(133,183,235,0.3); color: #85B7EB; font-weight: 500; }
     .week-day-header { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--text); margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
     .week-day-header span { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: 8px; vertical-align: middle; }
+    .att-btn { flex-shrink: 0; padding: 8px 20px; border-radius: 20px; border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; color: var(--muted); background: transparent; cursor: pointer; transition: all 0.18s; }
+    .att-btn:active { transform: scale(0.96); }
+    .att-btn.active { background: rgba(245,196,179,0.15); border-color: rgba(245,196,179,0.4); color: #F5C4B3; font-weight: 500; }
+    .att-page { display: none; padding: 0 0 20px; }
+    .att-page.visible { display: block; }
+    .att-day-header { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--text); margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .att-day-header span { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: 8px; vertical-align: middle; }
+    .att-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 12px; }
+    .att-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .att-row:last-child { border-bottom: none; }
+    .att-name { display: flex; align-items: center; gap: 12px; }
+    .att-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+    .att-label { font-size: 14px; font-weight: 500; color: var(--text); }
+    .att-label span { display: block; font-size: 11px; font-weight: 400; color: var(--muted); margin-top: 1px; }
+    .toggle { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border2); border-radius: 13px; cursor: pointer; transition: 0.2s; }
+    .toggle-slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+    .toggle input:checked + .toggle-slider { background: var(--success); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
   </style>
 </head>
 <body>
@@ -151,6 +153,7 @@
     <button class="day-tab" data-day="wednesday" onclick="setDay('wednesday',this)">Wednesday</button>
     <button class="day-tab active" data-day="thursday" onclick="setDay('thursday',this)">Thursday</button>
     <button class="week-btn" id="week-btn" onclick="setWeekView(this)">Week</button>
+    <button class="att-btn" id="att-btn" onclick="setAttView(this)">Attendance</button>
   </div>
   <div class="slots" id="slots"><div class="loading">Loading bookings...<br><span style="font-size:12px;opacity:0.5;margin-top:8px;display:block">Made by Akhil Akella</span></div></div>
   <button class="wa-btn" onclick="shareWhatsApp()">
@@ -158,6 +161,8 @@
     Share to WhatsApp
   </button>
 </div>
+
+<div class="att-page" id="att-page"></div>
 
 <div class="bottom-nav">
   <div class="nav-info">
@@ -167,7 +172,6 @@
   <button class="reset-btn" onclick="confirmReset()">Reset week</button>
 </div>
 
-<!-- Single player modal -->
 <div class="modal-bg" id="single-modal-bg" onclick="closeSingleModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -206,6 +210,13 @@
 
 <script>
 const MEMBERS = ['Akhil','Sumedh','Pujitha','Advaith','Praneeth','Hasini','Kishika'];
+const ATT_MEMBERS = [
+  {name:'Phani', color:'#5DCAA5'},
+  {name:'Sunil', color:'#AFA9EC'},
+  {name:'Niranjan', color:'#85B7EB'},
+  {name:'Mohan', color:'#F0997B'},
+  {name:'Sainath', color:'#97C459'},
+];
 const COLORS = ['#5DCAA5','#AFA9EC','#85B7EB','#F0997B','#97C459','#FAC775','#F5C4B3'];
 const nameColors = {};
 MEMBERS.forEach((m,i) => nameColors[m] = COLORS[i]);
@@ -213,9 +224,9 @@ function color(name) { return nameColors[name] || '#555'; }
 function initials(name) { return name ? name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '+'; }
 
 const SLOTS = {
-  monday:    ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
-  wednesday: ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
-  thursday:  ['6:00 – 6:40 pm','6:40 – 7:20 pm','7:20 – 8:00 pm'],
+  monday:    ['6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm','8:00 \u2013 8:40 pm'],
+  wednesday: ['6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm','8:00 \u2013 8:40 pm'],
+  thursday:  ['6:00 \u2013 6:40 pm','6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm'],
 };
 
 function makeDefaultState() {
@@ -223,10 +234,7 @@ function makeDefaultState() {
   ['monday','wednesday','thursday'].forEach(day => {
     s[day] = SLOTS[day].map(time => ({
       time,
-      players: [
-        {name:'', booked:false, court:null},
-        {name:'', booked:false, court:null},
-      ]
+      players: [{name:'',booked:false,court:null},{name:'',booked:false,court:null}]
     }));
   });
   return s;
@@ -235,8 +243,10 @@ function makeDefaultState() {
 let state = null;
 let currentDay = 'thursday';
 let editingSlot = null;
-let weekView = false;
 let editingPlayer = null;
+let weekView = false;
+let attView = false;
+let attState = {};
 
 async function loadData() {
   try {
@@ -272,9 +282,7 @@ async function savePlayer(day, slotIdx, playerIdx) {
       body: JSON.stringify({ day, slotIdx, playerIdx, player })
     });
     const data = await res.json();
-    if (data.ok) {
-      state = data.data;
-    }
+    if (data.ok) state = data.data;
   } catch(e) { console.error('Save player failed', e); }
 }
 
@@ -316,26 +324,6 @@ function getWeekNumber(d) {
   return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
 }
 
-function setDay(day, el) {
-  currentDay = day;
-  weekView = false;
-  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('week-btn').classList.remove('active');
-  el.classList.add('active');
-  document.getElementById('nav-day').textContent = formatDate(getNextDay(day));
-  document.querySelector('.wa-btn').onclick = shareWhatsApp;
-  render();
-}
-
-function setWeekView(el) {
-  weekView = true;
-  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('nav-day').textContent = 'This Week';
-  document.querySelector('.wa-btn').onclick = shareWeekWhatsApp;
-  renderWeek();
-}
-
 function getNextDay(dayName) {
   const days = {sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
   const today = new Date();
@@ -348,13 +336,54 @@ function getNextDay(dayName) {
   return next;
 }
 
+function setDay(day, el) {
+  currentDay = day;
+  weekView = false;
+  if (attView) exitAttView();
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('week-btn').classList.remove('active');
+  el.classList.add('active');
+  document.getElementById('nav-day').textContent = formatDate(getNextDay(day));
+  document.querySelector('.wa-btn').onclick = shareWhatsApp;
+  render();
+}
+
+function setWeekView(el) {
+  weekView = true;
+  if (attView) exitAttView();
+  document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('nav-day').textContent = 'This Week';
+  document.querySelector('.wa-btn').onclick = shareWeekWhatsApp;
+  renderWeek();
+}
+
+function setAttView(el) {
+  attView = true;
+  weekView = false;
+  document.querySelectorAll('.day-tab, .week-btn').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('slots').style.display = 'none';
+  document.querySelector('.wa-btn').style.display = 'none';
+  document.getElementById('att-page').classList.add('visible');
+  document.getElementById('nav-day').textContent = 'Attendance';
+  renderAtt();
+}
+
+function exitAttView() {
+  attView = false;
+  document.getElementById('slots').style.display = '';
+  document.querySelector('.wa-btn').style.display = '';
+  document.getElementById('att-page').classList.remove('visible');
+  document.getElementById('att-btn').classList.remove('active');
+}
+
 function render() {
   if (!state) return;
   const slots = state[currentDay];
   const container = document.getElementById('slots');
   container.innerHTML = '';
   document.getElementById('nav-day').textContent = formatDate(getNextDay(currentDay));
-
   slots.forEach((slot, i) => {
     const bookedCount = slot.players.filter(p => p.booked && p.name).length;
     const namedCount = slot.players.filter(p => p.name).length;
@@ -362,24 +391,18 @@ function render() {
     const noneBooked = bookedCount === 0;
     const statusClass = allBooked ? 'all' : noneBooked ? 'none' : 'partial';
     const statusText = allBooked ? 'All booked' : noneBooked ? 'Not booked' : 'Partially booked';
-
     const card = document.createElement('div');
     card.className = 'slot-card' + (allBooked ? ' all-booked' : '');
-
     const playersHTML = slot.players.map((p, pi) => {
       const hasName = !!p.name;
       const c = hasName ? color(p.name) : '#3a3a4a';
       const statusTxt = p.booked && p.court ? 'Court ' + p.court : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
       return '<div class="player' + (p.booked?' booked':'') + (!hasName?' empty':'') + '" onclick="openSingleModal(' + i + ',' + pi + ')">'
         + '<div class="avatar" style="background:' + c + (hasName?'22':'44') + ';color:' + (hasName?c:'#555') + '">' + initials(p.name) + '</div>'
-        + '<div class="player-info">'
-        + '<div class="player-name" style="' + (!hasName?'color:var(--muted);font-weight:400':'') + '">' + (hasName ? p.name : 'Tap to assign') + '</div>'
-        + '<div class="player-status">' + statusTxt + '</div>'
-        + '</div>'
-        + '<div class="check-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
-        + '</div>';
+        + '<div class="player-info"><div class="player-name" style="' + (!hasName?'color:var(--muted);font-weight:400':'') + '">' + (hasName ? p.name : 'Tap to assign') + '</div>'
+        + '<div class="player-status">' + statusTxt + '</div></div>'
+        + '<div class="check-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>';
     }).join('');
-
     const courts = slot.players.filter(p=>p.booked&&p.court).map(p=>p.court);
     const uniqueCourts = [...new Set(courts)];
     let courtBadgeHTML = '';
@@ -388,10 +411,132 @@ function render() {
     } else if (uniqueCourts.length > 1) {
       courtBadgeHTML = '<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">Courts ' + uniqueCourts.join(' & ') + '</div>';
     }
-
     card.innerHTML = '<div class="slot-top"><div class="slot-time-wrap"><div class="slot-label">Court slot</div><div class="slot-time">' + slot.time + '</div></div><div class="slot-status ' + statusClass + '">' + statusText + '</div></div><div class="slot-players">' + playersHTML + '</div>' + courtBadgeHTML;
     container.appendChild(card);
   });
+}
+
+function renderWeek() {
+  if (!state) return;
+  const container = document.getElementById('slots');
+  container.innerHTML = '';
+  ['monday','wednesday','thursday'].forEach(day => {
+    const date = getNextDay(day);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dateStr = ordinal(date.getDate()) + ' ' + months[date.getMonth()];
+    const header = document.createElement('div');
+    header.className = 'week-day-header';
+    header.innerHTML = day.charAt(0).toUpperCase()+day.slice(1) + '<span>' + dateStr + '</span>';
+    container.appendChild(header);
+    state[day].forEach((slot, i) => {
+      const bookedCount = slot.players.filter(p => p.booked && p.name).length;
+      const namedCount = slot.players.filter(p => p.name).length;
+      const allBooked = namedCount > 0 && bookedCount === namedCount;
+      const noneBooked = bookedCount === 0;
+      const statusClass = allBooked ? 'all' : noneBooked ? 'none' : 'partial';
+      const statusText = allBooked ? 'All booked' : noneBooked ? 'Not booked' : 'Partially booked';
+      const card = document.createElement('div');
+      card.className = 'slot-card' + (allBooked ? ' all-booked' : '');
+      card.style.marginBottom = '10px';
+      const playersHTML = slot.players.map((p, pi) => {
+        const hasName = !!p.name;
+        const c = hasName ? color(p.name) : '#3a3a4a';
+        const statusTxt = p.booked && p.court ? 'Court ' + p.court : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
+        return '<div class="player' + (p.booked?' booked':'') + (!hasName?' empty':'') + '" onclick="currentDay=&quot;' + day + '&quot;;openSingleModal(' + i + ',' + pi + ')">'
+          + '<div class="avatar" style="background:' + c + (hasName?'22':'44') + ';color:' + (hasName?c:'#555') + '">' + initials(p.name) + '</div>'
+          + '<div class="player-info"><div class="player-name" style="' + (!hasName?'color:var(--muted);font-weight:400':'') + '">' + (hasName ? p.name : 'Tap to assign') + '</div>'
+          + '<div class="player-status">' + statusTxt + '</div></div>'
+          + '<div class="check-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>';
+      }).join('');
+      const courts = slot.players.filter(p=>p.booked&&p.court).map(p=>p.court);
+      const uniqueCourts = [...new Set(courts)];
+      let courtBadgeHTML = '';
+      if (uniqueCourts.length === 1 && courts.length >= 1) {
+        courtBadgeHTML = '<div class="court-badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>Court ' + uniqueCourts[0] + '</div>';
+      } else if (uniqueCourts.length > 1) {
+        courtBadgeHTML = '<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">Courts ' + uniqueCourts.join(' & ') + '</div>';
+      }
+      card.innerHTML = '<div class="slot-top"><div class="slot-time-wrap"><div class="slot-label">Court slot</div><div class="slot-time">' + slot.time + '</div></div><div class="slot-status ' + statusClass + '">' + statusText + '</div></div><div class="slot-players">' + playersHTML + '</div>' + courtBadgeHTML;
+      container.appendChild(card);
+    });
+  });
+}
+
+function renderAtt() {
+  const container = document.getElementById('att-page');
+  container.innerHTML = '';
+  ['monday','wednesday','thursday'].forEach(day => {
+    const date = getNextDay(day);
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const dateStr = ordinal(date.getDate()) + ' ' + months[date.getMonth()];
+    const header = document.createElement('div');
+    header.className = 'att-day-header';
+    header.innerHTML = day.charAt(0).toUpperCase()+day.slice(1) + '<span>' + dateStr + '</span>';
+    container.appendChild(header);
+    const card = document.createElement('div');
+    card.className = 'att-card';
+    if (!attState[day]) attState[day] = {};
+    ATT_MEMBERS.forEach(function(m) {
+      const present = attState[day][m.name] || false;
+      const row = document.createElement('div');
+      row.className = 'att-row';
+      const ini = m.name.slice(0,2).toUpperCase();
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = present;
+      checkbox.addEventListener('change', (function(d, n) {
+        return function(e) { toggleAtt(d, n, e.target.checked); };
+      })(day, m.name));
+      const toggleLabel = document.createElement('label');
+      toggleLabel.className = 'toggle';
+      toggleLabel.appendChild(checkbox);
+      const slider = document.createElement('span');
+      slider.className = 'toggle-slider';
+      toggleLabel.appendChild(slider);
+      row.innerHTML = '<div class="att-name">'
+        + '<div class="att-avatar" style="background:' + m.color + '22;color:' + m.color + '">' + ini + '</div>'
+        + '<div class="att-label">' + m.name + '<span>' + (present ? 'Present' : 'Absent') + '</span></div>'
+        + '</div>';
+      row.appendChild(toggleLabel);
+      card.appendChild(row);
+    });
+    container.appendChild(card);
+  });
+}
+
+function toggleAtt(day, name, val) {
+  if (!attState[day]) attState[day] = {};
+  attState[day][name] = val;
+  saveAttState(day, name, val);
+  renderAtt();
+}
+
+function makeDefaultAttState() {
+  const s = {};
+  ['monday','wednesday','thursday'].forEach(day => {
+    s[day] = {};
+    ATT_MEMBERS.forEach(m => s[day][m.name] = false);
+  });
+  return s;
+}
+
+async function loadAttState() {
+  try {
+    const r = await fetch('/api/attendance');
+    attState = await r.json();
+  } catch(e) {
+    attState = makeDefaultAttState();
+  }
+}
+
+async function saveAttState(day, name, val) {
+  try {
+    await fetch('/api/attendance', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ day, name, present: val })
+    });
+  } catch(e) { console.error('Att save failed', e); }
 }
 
 function openSingleModal(slotIdx, playerIdx) {
@@ -400,7 +545,7 @@ function openSingleModal(slotIdx, playerIdx) {
   const slot = state[currentDay][slotIdx];
   const p = slot.players[playerIdx];
   const label = playerIdx === 0 ? 'Player 1' : 'Player 2';
-  document.getElementById('single-modal-title').textContent = label + ' · ' + slot.time;
+  document.getElementById('single-modal-title').textContent = label + ' \u00b7 ' + slot.time;
   document.getElementById('single-modal-sub').textContent = 'Select name and court number';
   document.getElementById('single-name').value = p.name || '';
   document.getElementById('single-court').value = p.court || '';
@@ -417,9 +562,7 @@ function saveSingleModal() {
   const name = document.getElementById('single-name').value;
   const court = document.getElementById('single-court').value;
   const p = state[currentDay][editingSlot].players[editingPlayer];
-  p.name = name;
-  p.court = court || null;
-  p.booked = name !== '' && court !== '';
+  p.name = name; p.court = court || null; p.booked = name !== '' && court !== '';
   document.getElementById('single-modal-bg').classList.remove('open');
   const savedSlot = editingSlot; const savedPlayer = editingPlayer; const savedDay = currentDay;
   editingSlot = null; editingPlayer = null;
@@ -454,81 +597,24 @@ function shareWhatsApp() {
   const date = getNextDay(currentDay);
   const dayLabel = formatDate(date);
   const slots = state[currentDay];
-  let msg = '🏸 *Court Booker - ' + dayLabel + '*\n';
+  let msg = '\uD83C\uDFF8 *Court Booker - ' + dayLabel + '*\n';
   msg += "Queen's Diamond Jubilee Centre\n\n";
   slots.forEach(slot => {
     msg += '*' + slot.time + '*\n';
     slot.players.forEach(p => {
       if (p.name) {
         const courtTxt = p.court ? ' - Court ' + p.court : ' - not booked yet';
-        const tick = p.booked ? '✅' : '⏳';
-        msg += tick + ' ' + p.name + courtTxt + '\n';
-      } else {
-        msg += '➕ Empty slot\n';
-      }
+        msg += (p.booked ? '\u2705' : '\u23F3') + ' ' + p.name + courtTxt + '\n';
+      } else { msg += '\u2795 Empty slot\n'; }
     });
     msg += '\n';
   });
   window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
-function renderWeek() {
-  if (!state) return;
-  const container = document.getElementById('slots');
-  container.innerHTML = '';
-  ['monday','wednesday','thursday'].forEach(day => {
-    const date = getNextDay(day);
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const dateStr = ordinal(date.getDate()) + ' ' + months[date.getMonth()];
-    const header = document.createElement('div');
-    header.className = 'week-day-header';
-    header.innerHTML = day.charAt(0).toUpperCase()+day.slice(1) + '<span>' + dateStr + '</span>';
-    container.appendChild(header);
-
-    state[day].forEach((slot, i) => {
-      const bookedCount = slot.players.filter(p => p.booked && p.name).length;
-      const namedCount = slot.players.filter(p => p.name).length;
-      const allBooked = namedCount > 0 && bookedCount === namedCount;
-      const noneBooked = bookedCount === 0;
-      const statusClass = allBooked ? 'all' : noneBooked ? 'none' : 'partial';
-      const statusText = allBooked ? 'All booked' : noneBooked ? 'Not booked' : 'Partially booked';
-
-      const card = document.createElement('div');
-      card.className = 'slot-card' + (allBooked ? ' all-booked' : '');
-      card.style.marginBottom = '10px';
-
-      const playersHTML = slot.players.map((p, pi) => {
-        const hasName = !!p.name;
-        const c = hasName ? color(p.name) : '#3a3a4a';
-        const statusTxt = p.booked && p.court ? 'Court ' + p.court : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
-        return '<div class="player' + (p.booked?' booked':'') + (!hasName?' empty':'') + '" onclick="currentDay=&quot;' + day + '&quot;;openSingleModal(' + i + ',' + pi + ')">'
-          + '<div class="avatar" style="background:' + c + (hasName?'22':'44') + ';color:' + (hasName?c:'#555') + '">' + initials(p.name) + '</div>'
-          + '<div class="player-info">'
-          + '<div class="player-name" style="' + (!hasName?'color:var(--muted);font-weight:400':'') + '">' + (hasName ? p.name : 'Tap to assign') + '</div>'
-          + '<div class="player-status">' + statusTxt + '</div>'
-          + '</div>'
-          + '<div class="check-icon"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
-          + '</div>';
-      }).join('');
-
-      const courts = slot.players.filter(p=>p.booked&&p.court).map(p=>p.court);
-      const uniqueCourts = [...new Set(courts)];
-      let courtBadgeHTML = '';
-      if (uniqueCourts.length === 1 && courts.length >= 1) {
-        courtBadgeHTML = '<div class="court-badge"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="1" x2="6" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1.2"/></svg>Court ' + uniqueCourts[0] + '</div>';
-      } else if (uniqueCourts.length > 1) {
-        courtBadgeHTML = '<div class="court-badge" style="background:rgba(239,159,39,0.1);border-color:rgba(239,159,39,0.3);color:var(--warn)">Courts ' + uniqueCourts.join(' & ') + '</div>';
-      }
-
-      card.innerHTML = '<div class="slot-top"><div class="slot-time-wrap"><div class="slot-label">Court slot</div><div class="slot-time">' + slot.time + '</div></div><div class="slot-status ' + statusClass + '">' + statusText + '</div></div><div class="slot-players">' + playersHTML + '</div>' + courtBadgeHTML;
-      container.appendChild(card);
-    });
-  });
-}
-
 function shareWeekWhatsApp() {
   if (!state) return;
-  let msg = "🏸 *Court Booker - This Week*\n";
+  let msg = "\uD83C\uDFF8 *Court Booker - This Week*\n";
   msg += "Queen's Diamond Jubilee Centre\n\n";
   ['monday','wednesday','thursday'].forEach(day => {
     const date = getNextDay(day);
@@ -540,11 +626,8 @@ function shareWeekWhatsApp() {
       slot.players.forEach(p => {
         if (p.name) {
           const courtTxt = p.court ? ' - Court ' + p.court : ' - not booked yet';
-          const tick = p.booked ? '✅' : '⏳';
-          msg += tick + ' ' + p.name + courtTxt + '\n';
-        } else {
-          msg += '➕ Empty slot\n';
-        }
+          msg += (p.booked ? '\u2705' : '\u23F3') + ' ' + p.name + courtTxt + '\n';
+        } else { msg += '\u2795 Empty slot\n'; }
       });
     });
     msg += '\n';
@@ -554,7 +637,7 @@ function shareWeekWhatsApp() {
 
 function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light');
-  document.getElementById('theme-toggle').textContent = isLight ? '🌑' : '🌙';
+  document.getElementById('theme-toggle').textContent = isLight ? '\uD83C\uDF11' : '\uD83C\uDF19';
   document.querySelector('meta[name="theme-color"]').setAttribute('content', isLight ? '#f4f4f0' : '#0f0f13');
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
 }
@@ -563,7 +646,7 @@ function initTheme() {
   const saved = localStorage.getItem('theme');
   if (saved === 'light') {
     document.documentElement.classList.add('light');
-    document.getElementById('theme-toggle').textContent = '🌑';
+    document.getElementById('theme-toggle').textContent = '\uD83C\uDF11';
     document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f4f4f0');
   }
 }
@@ -583,11 +666,16 @@ if ('serviceWorker' in navigator) {
 initTheme();
 checkAutoReset();
 loadData();
+loadAttState().then(() => { if (attView) renderAtt(); });
 
 const socket = io();
 socket.on('bookings_updated', (data) => {
   state = data;
-  if (weekView) { renderWeek(); } else { render(); }
+  if (weekView) { renderWeek(); } else if (!attView) { render(); }
+});
+socket.on('attendance_updated', (data) => {
+  attState = data;
+  if (attView) renderAtt();
 });
 </script>
 </body>
