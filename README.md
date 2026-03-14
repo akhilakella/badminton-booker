@@ -1,5 +1,5 @@
 # 🏸 Court Booker PWA
-Badminton booking dashboard for the Rugby group — Queen's Diamond Jubilee Centre.
+Badminton booking dashboard for our group.
 
 ## Files
 - `app.py` — Flask server + booking data API
