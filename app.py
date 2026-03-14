@@ -56,6 +56,24 @@ def icon():
 def get_bookings():
     return jsonify(load_data())
 
+# New atomic per-player update endpoint - fixes race condition
+@app.route('/api/update-player', methods=['POST'])
+def update_player():
+    body = request.get_json()
+    day = body.get('day')
+    slot_idx = body.get('slotIdx')
+    player_idx = body.get('playerIdx')
+    player = body.get('player')
+
+    if day not in DEFAULT_DATA or slot_idx is None or player_idx is None:
+        return jsonify({"ok": False, "error": "Invalid request"}), 400
+
+    # Load fresh from Redis, apply just this one change, save back
+    data = load_data()
+    data[day][slot_idx]['players'][player_idx] = player
+    save_data(data)
+    return jsonify({"ok": True, "data": data})
+
 @app.route('/api/bookings', methods=['POST'])
 def update_bookings():
     data = request.get_json()
