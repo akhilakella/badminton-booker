@@ -3,7 +3,7 @@ services:
     name: badminton-booker
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --timeout 60 --workers 2
+    startCommand: gunicorn --worker-class eventlet -w 1 app:app --timeout 120
     plan: free
     envVars:
       - key: PYTHON_VERSION
