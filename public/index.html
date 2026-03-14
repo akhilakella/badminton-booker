@@ -389,7 +389,7 @@ function saveSingleModal() {
   p.booked = name !== '' && court !== '';
   document.getElementById('single-modal-bg').classList.remove('open');
   editingSlot = null; editingPlayer = null;
-  saveData(); render();
+  saveData(); if (weekView) { renderWeek(); } else { render(); }
   const msg = p.booked ? name + ' booked - Court ' + court : name ? name + ' assigned' : 'Slot cleared';
   showToast(msg);
 }
@@ -399,7 +399,7 @@ function clearSinglePlayer() {
   p.name = ''; p.booked = false; p.court = null;
   document.getElementById('single-modal-bg').classList.remove('open');
   editingSlot = null; editingPlayer = null;
-  saveData(); render();
+  saveData(); if (weekView) { renderWeek(); } else { render(); }
   showToast('Spot cleared');
 }
 
@@ -462,7 +462,7 @@ function renderWeek() {
         const hasName = !!p.name;
         const c = hasName ? color(p.name) : '#3a3a4a';
         const statusTxt = p.booked && p.court ? 'Court ' + p.court : p.booked ? 'Booked' : hasName ? 'Not booked yet' : 'Tap to assign';
-        return '<div class="player' + (p.booked?' booked':'') + (!hasName?' empty':'') + '" onclick="currentDay='' + day + '';openSingleModal(' + i + ',' + pi + ')">'
+        return '<div class="player' + (p.booked?' booked':'') + (!hasName?' empty':'') + '" onclick="currentDay=&quot;' + day + '&quot;;openSingleModal(' + i + ',' + pi + ')">'
           + '<div class="avatar" style="background:' + c + (hasName?'22':'44') + ';color:' + (hasName?c:'#555') + '">' + initials(p.name) + '</div>'
           + '<div class="player-info">'
           + '<div class="player-name" style="' + (!hasName?'color:var(--muted);font-weight:400':'') + '">' + (hasName ? p.name : 'Tap to assign') + '</div>'
