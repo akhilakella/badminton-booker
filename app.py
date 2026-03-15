@@ -91,6 +91,9 @@ def update_player():
 @app.route('/api/bookings', methods=['POST'])
 def update_bookings():
     data = request.get_json()
+    # Reject empty or suspiciously small payloads that would wipe data
+    if not data or not isinstance(data, dict) or len(str(data)) < 100:
+        return jsonify({"ok": False, "error": "Rejected empty payload"}), 400
     save_data(data)
     return jsonify({"ok": True})
 
