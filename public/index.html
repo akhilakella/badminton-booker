@@ -307,42 +307,7 @@ function updateTabDates() {
   });
 }
 
-function checkAutoReset() {
-  const now = new Date();
-  const dayNum = now.getDay(); // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu
-  const hour = now.getHours();
-  const dayMap = {1:'monday', 3:'wednesday', 4:'thursday'};
-  const playDays = [1, 3, 4];
-
-  playDays.forEach(d => {
-    const dayName = dayMap[d];
-    const resetKey = 'lastReset_' + dayName;
-    const lastReset = localStorage.getItem(resetKey);
-
-    // Work out the date of the most recent occurrence of this play day at 10pm
-    const today = new Date();
-    let diff = today.getDay() - d;
-    if (diff < 0) diff += 7;
-    const lastOccurrence = new Date(today);
-    lastOccurrence.setDate(today.getDate() - diff);
-    lastOccurrence.setHours(22, 0, 0, 0);
-
-    // If we are currently on that play day and past 10pm, use today
-    // Otherwise use the last occurrence
-    const resetTime = lastOccurrence.getTime();
-    const resetKeyValue = dayName + '-' + resetTime;
-
-    if (lastReset !== resetKeyValue) {
-      // Only reset if we are past the 10pm threshold for this day
-      const now2 = new Date();
-      if (now2.getTime() >= resetTime) {
-        if (!state) state = makeDefaultState();
-        state[dayName] = makeDefaultState()[dayName];
-        saveData().then(() => localStorage.setItem(resetKey, resetKeyValue));
-      }
-    }
-  });
-}
+function checkAutoReset() { /* auto reset disabled */ }
 
 function getNextDay(dayName) {
   const days = {sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
