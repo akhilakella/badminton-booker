@@ -140,10 +140,10 @@
     <div class="topbar-left">
       <div class="venue-tag">Queen's Diamond Jubilee · Rugby</div>
       <div class="app-title">Court<span>Booker</span></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:0.5px">Made by Akhil Akella :)</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:0.5px">Made by Akhil Akella</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">&#9728;</button>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()">&#127769;</button>
       <span class="shuttle">&#127992;</span>
     </div>
   </div>
@@ -154,7 +154,7 @@
     <button class="week-btn" id="week-btn" onclick="setWeekView(this)">Week</button>
     <button class="att-btn" id="att-btn" onclick="setAttView(this)">Attendance</button>
   </div>
-  <div class="slots" id="slots"><div class="loading">Loading bookings...<br><span style="font-size:12px;opacity:0.5;margin-top:8px;display:block">Made by Akhil Akella :)</span></div></div>
+  <div class="slots" id="slots"><div class="loading">Loading bookings...<br><span style="font-size:12px;opacity:0.5;margin-top:8px;display:block">Made by Akhil Akella</span></div></div>
   <button class="wa-btn" onclick="shareWhatsApp()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.11 1.523 5.835L0 24l6.338-1.499A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.374l-.36-.214-3.732.882.939-3.627-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
     Share to WhatsApp
@@ -213,10 +213,9 @@ const ATT_MEMBERS = [
   {name:'Phani', color:'#5DCAA5'},
   {name:'Sunil', color:'#AFA9EC'},
   {name:'Niranjan', color:'#85B7EB'},
-  {name:'Chandra Mohan', color:'#F0997B'},
+  {name:'Mohan', color:'#F0997B'},
   {name:'Sainath', color:'#97C459'},
   {name:'Pavan', color:'#FAC775'},
-  {name:'Nagesh', color:'#F5C4B3'},
 ];
 const COLORS = ['#5DCAA5','#AFA9EC','#85B7EB','#F0997B','#97C459','#FAC775','#F5C4B3'];
 const nameColors = {};
@@ -309,20 +308,40 @@ function updateTabDates() {
 }
 
 function checkAutoReset() {
-  const lastReset = localStorage.getItem('lastResetWeek');
   const now = new Date();
-  const weekKey = now.getFullYear() + '-W' + getWeekNumber(now);
-  if (lastReset !== weekKey) {
-    state = makeDefaultState();
-    saveData().then(() => localStorage.setItem('lastResetWeek', weekKey));
-  }
-}
+  const dayNum = now.getDay(); // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu
+  const hour = now.getHours();
+  const dayMap = {1:'monday', 3:'wednesday', 4:'thursday'};
+  const playDays = [1, 3, 4];
 
-function getWeekNumber(d) {
-  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-  return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+  playDays.forEach(d => {
+    const dayName = dayMap[d];
+    const resetKey = 'lastReset_' + dayName;
+    const lastReset = localStorage.getItem(resetKey);
+
+    // Work out the date of the most recent occurrence of this play day at 10pm
+    const today = new Date();
+    let diff = today.getDay() - d;
+    if (diff < 0) diff += 7;
+    const lastOccurrence = new Date(today);
+    lastOccurrence.setDate(today.getDate() - diff);
+    lastOccurrence.setHours(22, 0, 0, 0);
+
+    // If we are currently on that play day and past 10pm, use today
+    // Otherwise use the last occurrence
+    const resetTime = lastOccurrence.getTime();
+    const resetKeyValue = dayName + '-' + resetTime;
+
+    if (lastReset !== resetKeyValue) {
+      // Only reset if we are past the 10pm threshold for this day
+      const now2 = new Date();
+      if (now2.getTime() >= resetTime) {
+        if (!state) state = makeDefaultState();
+        state[dayName] = makeDefaultState()[dayName];
+        saveData().then(() => localStorage.setItem(resetKey, resetKeyValue));
+      }
+    }
+  });
 }
 
 function getNextDay(dayName) {
