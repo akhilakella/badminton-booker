@@ -4,9 +4,14 @@ import json, os, redis
 app = Flask(__name__, static_folder='public')
 
 REDIS_URL = os.environ.get('REDIS_URL')
-rdb = redis.from_url(REDIS_URL) if REDIS_URL else None
+
+# safer redis connection
+rdb = redis.from_url(REDIS_URL, decode_responses=True) if REDIS_URL else None
+
 REDIS_KEY = 'courtbooker:bookings'
 ATT_KEY = 'courtbooker:attendance'
+
+RESET_CODE = "6767"
 
 DEFAULT_DATA = {
     "monday": [
@@ -32,47 +37,68 @@ DEFAULT_ATT = {
     "thursday":  {"Phani": False, "Sunil": False, "Niranjan": False, "Mohan": False, "Sainath": False, "Pavan": False},
 }
 
+
 def load_data():
-    if rdb:
-        val = rdb.get(REDIS_KEY)
-        if val:
-            return json.loads(val)
-    return json.loads(json.dumps(DEFAULT_DATA))
+    if not rdb:
+        return json.loads(json.dumps(DEFAULT_DATA))
+
+    val = rdb.get(REDIS_KEY)
+
+    # initialize redis if empty (prevents wipe issue)
+    if not val:
+        rdb.set(REDIS_KEY, json.dumps(DEFAULT_DATA))
+        return json.loads(json.dumps(DEFAULT_DATA))
+
+    return json.loads(val)
+
 
 def save_data(data):
     if rdb:
         rdb.set(REDIS_KEY, json.dumps(data))
 
+
 def load_att():
-    if rdb:
-        val = rdb.get(ATT_KEY)
-        if val:
-            return json.loads(val)
-    return json.loads(json.dumps(DEFAULT_ATT))
+    if not rdb:
+        return json.loads(json.dumps(DEFAULT_ATT))
+
+    val = rdb.get(ATT_KEY)
+
+    if not val:
+        rdb.set(ATT_KEY, json.dumps(DEFAULT_ATT))
+        return json.loads(json.dumps(DEFAULT_ATT))
+
+    return json.loads(val)
+
 
 def save_att(data):
     if rdb:
         rdb.set(ATT_KEY, json.dumps(data))
 
+
 @app.route('/')
 def index():
     return send_from_directory('public', 'index.html')
+
 
 @app.route('/manifest.json')
 def manifest():
     return send_from_directory('public', 'manifest.json')
 
+
 @app.route('/sw.js')
 def sw():
     return send_from_directory('public', 'sw.js')
+
 
 @app.route('/icon-192.svg')
 def icon():
     return send_from_directory('public', 'icon-192.svg')
 
+
 @app.route('/api/bookings', methods=['GET'])
 def get_bookings():
     return jsonify(load_data())
+
 
 @app.route('/api/update-player', methods=['POST'])
 def update_player():
@@ -81,30 +107,49 @@ def update_player():
     slot_idx = body.get('slotIdx')
     player_idx = body.get('playerIdx')
     player = body.get('player')
+
     if day not in DEFAULT_DATA or slot_idx is None or player_idx is None:
         return jsonify({"ok": False, "error": "Invalid request"}), 400
+
     data = load_data()
     data[day][slot_idx]['players'][player_idx] = player
     save_data(data)
+
     return jsonify({"ok": True, "data": data})
+
 
 @app.route('/api/bookings', methods=['POST'])
 def update_bookings():
     data = request.get_json()
-    # Reject empty or suspiciously small payloads that would wipe data
-    if not data or not isinstance(data, dict) or len(str(data)) < 100:
-        return jsonify({"ok": False, "error": "Rejected empty payload"}), 400
+
+    # stronger protection against accidental wipes
+    if not data or not isinstance(data, dict):
+        return jsonify({"ok": False, "error": "Invalid payload"}), 400
+
+    # reject empty days
+    if all(len(v) == 0 for v in data.values()):
+        return jsonify({"ok": False, "error": "Rejected empty data"}), 400
+
     save_data(data)
     return jsonify({"ok": True})
 
+
 @app.route('/api/reset', methods=['POST'])
 def reset():
+    body = request.get_json()
+    code = body.get("code")
+
+    if code != RESET_CODE:
+        return jsonify({"ok": False, "error": "Invalid reset code"}), 403
+
     save_data(json.loads(json.dumps(DEFAULT_DATA)))
     return jsonify({"ok": True})
+
 
 @app.route('/api/attendance', methods=['GET'])
 def get_attendance():
     return jsonify(load_att())
+
 
 @app.route('/api/attendance', methods=['POST'])
 def update_attendance():
@@ -112,12 +157,18 @@ def update_attendance():
     day = body.get('day')
     name = body.get('name')
     present = body.get('present')
+
     att = load_att()
+
     if day not in att:
         att[day] = {}
+
     att[day][name] = present
+
     save_att(att)
+
     return jsonify({"ok": True})
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
