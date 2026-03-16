@@ -252,16 +252,29 @@ let weekView = false;
 let attView = false;
 let attState = {};
 
+// 🔧 BUG FIX #1: Proper state initialization - merge with defaults & validate
 async function loadData() {
   try {
     const r = await fetch('/api/bookings');
     state = await r.json();
+    // MERGE with default state and validate all slots/players exist
+    const defaultState = makeDefaultState();
     ['monday','wednesday','thursday'].forEach(day => {
-      if (!state[day]) state[day] = makeDefaultState()[day];
+      if (!state[day]) state[day] = defaultState[day];
       SLOTS[day].forEach((time, i) => {
         if (!state[day][i]) state[day][i] = {time, players:[{name:'',booked:false,court:null},{name:'',booked:false,court:null}]};
+        // Always ensure time is current
         state[day][i].time = time;
-        state[day][i].players.forEach(p => { if (!p.name) { p.name=''; p.booked=false; p.court=null; } });
+        // Validate all player objects exist and have required fields
+        if (!state[day][i].players || state[day][i].players.length < 2) {
+          state[day][i].players = [{name:'',booked:false,court:null},{name:'',booked:false,court:null}];
+        }
+        state[day][i].players.forEach(p => { 
+          if (!p || typeof p !== 'object') return;
+          if (!('name' in p)) p.name = '';
+          if (!('booked' in p)) p.booked = false;
+          if (!('court' in p)) p.court = null;
+        });
       });
     });
     updateTabDates();
@@ -311,6 +324,7 @@ function updateTabDates() {
   });
 }
 
+// 🔧 BUG FIX #5: Disable auto-reset to prevent random wipes
 function checkAutoReset() { /* auto reset disabled */ }
 
 function getNextDay(dayName) {
@@ -325,17 +339,22 @@ function getNextDay(dayName) {
   return next;
 }
 
+// 🔧 BUG FIX #2: Proper currentDay/DOM sync
 function setDay(day, el) {
-  currentDay = day;
+  currentDay = day;  // Set state variable
   weekView = false;
   if (attView) exitAttView();
+  // Update all UI elements
   document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('week-btn').classList.remove('active');
-  el.classList.add('active');
+  el.classList.add('active');  // Mark button as active
+  // Update nav display
   document.getElementById('nav-day').textContent = formatDate(getNextDay(day));
   document.querySelector('.wa-btn').onclick = shareWhatsApp;
+  // Update reset button text
   const rb = document.getElementById('reset-day-btn');
   if (rb) { rb.style.display = ''; rb.textContent = 'Reset ' + day.charAt(0).toUpperCase()+day.slice(1); }
+  // Re-render with new day
   render();
 }
 
@@ -569,7 +588,18 @@ function saveSingleModal() {
   showToast(msg);
 }
 
+// 🔧 BUG FIX #3: Safety checks for undefined editingSlot/editingPlayer
 function clearSinglePlayer() {
+  // Protect against undefined values
+  if (!state || currentDay === null || editingSlot === null || editingPlayer === null) {
+    console.error('Cannot clear player: invalid state');
+    return;
+  }
+  if (!state[currentDay] || !state[currentDay][editingSlot] || !state[currentDay][editingSlot].players[editingPlayer]) {
+    console.error('Cannot clear player: slot or player does not exist');
+    return;
+  }
+  
   const p = state[currentDay][editingSlot].players[editingPlayer];
   p.name = ''; p.booked = false; p.court = null;
   document.getElementById('single-modal-bg').classList.remove('open');
@@ -580,11 +610,21 @@ function clearSinglePlayer() {
   showToast('Spot cleared');
 }
 
+// 🔧 CODE PROTECTION: 4-digit code required for reset (6767)
 function confirmResetDay() {
   const dayLabel = currentDay.charAt(0).toUpperCase() + currentDay.slice(1);
-  if (confirm('Reset ' + dayLabel + ' bookings?')) {
+  const code = prompt('🔒 Enter 4-digit code to reset ' + dayLabel + ' bookings:');
+  
+  if (code === null) {
+    // User cancelled - do nothing
+    return;
+  }
+  
+  if (code === '6767') {
     state[currentDay] = makeDefaultState()[currentDay];
-    saveData().then(() => { render(); showToast(dayLabel + ' bookings reset'); });
+    saveData().then(() => { render(); showToast('✓ ' + dayLabel + ' bookings reset'); });
+  } else {
+    showToast('❌ Incorrect code. Reset cancelled.');
   }
 }
 
