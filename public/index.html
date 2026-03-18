@@ -612,7 +612,7 @@ function clearSinglePlayer() {
   showToast('Spot cleared');
 }
 
-// 🔧 CODE PROTECTION: 4-digit code required for reset (6767)
+// 🔧 CODE PROTECTION: 4-digit code required for reset (7777)
 function confirmResetDay() {
   const dayLabel = currentDay.charAt(0).toUpperCase() + currentDay.slice(1);
   const code = prompt('🔒 Enter 4-digit code to reset ' + dayLabel + ' bookings:');
@@ -622,7 +622,7 @@ function confirmResetDay() {
     return;
   }
   
-  if (code === '6767') {
+  if (code === '7777') {
     state[currentDay] = makeDefaultState()[currentDay];
     saveData().then(() => { render(); showToast('✓ ' + dayLabel + ' bookings reset'); });
   } else {
