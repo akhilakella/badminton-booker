@@ -133,6 +133,8 @@
     .toggle-slider:before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
     .toggle input:checked + .toggle-slider { background: var(--success); }
     .toggle input:checked + .toggle-slider:before { transform: translateX(18px); }
+    .att-share-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin: 0 0 20px; padding: 11px; border-radius: 12px; border: 1px solid rgba(37,211,102,0.3); background: rgba(37,211,102,0.08); color: #25d366; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+    .att-share-btn:active { background: rgba(37,211,102,0.14); }
   </style>
 </head>
 <body>
@@ -171,7 +173,6 @@
     <strong id="nav-day">Thursday</strong><br>
     <span id="nav-date">Queen's Diamond Jubilee Centre</span>
   </div>
-
 </div>
 
 <div class="modal-bg" id="single-modal-bg" onclick="closeSingleModal(event)">
@@ -230,9 +231,9 @@ function color(name) { return nameColors[name] || '#555'; }
 function initials(name) { return name ? name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '+'; }
 
 const SLOTS = {
-  monday:    ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
-  wednesday: ['6:40 – 7:20 pm','7:20 – 8:00 pm','8:00 – 8:40 pm'],
-  thursday:  ['6:00 – 6:40 pm','6:40 – 7:20 pm','7:20 – 8:00 pm'],
+  monday:    ['6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm','8:00 \u2013 8:40 pm'],
+  wednesday: ['6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm','8:00 \u2013 8:40 pm'],
+  thursday:  ['6:00 \u2013 6:40 pm','6:40 \u2013 7:20 pm','7:20 \u2013 8:00 pm'],
 };
 
 function makeDefaultState() {
@@ -254,24 +255,20 @@ let weekView = false;
 let attView = false;
 let attState = {};
 
-// 🔧 BUG FIX #1: Proper state initialization - merge with defaults & validate
 async function loadData() {
   try {
     const r = await fetch('/api/bookings');
     state = await r.json();
-    // MERGE with default state and validate all slots/players exist
     const defaultState = makeDefaultState();
     ['monday','wednesday','thursday'].forEach(day => {
       if (!state[day]) state[day] = defaultState[day];
       SLOTS[day].forEach((time, i) => {
         if (!state[day][i]) state[day][i] = {time, players:[{name:'',booked:false,court:null},{name:'',booked:false,court:null}]};
-        // Always ensure time is current
         state[day][i].time = time;
-        // Validate all player objects exist and have required fields
         if (!state[day][i].players || state[day][i].players.length < 2) {
           state[day][i].players = [{name:'',booked:false,court:null},{name:'',booked:false,court:null}];
         }
-        state[day][i].players.forEach(p => { 
+        state[day][i].players.forEach(p => {
           if (!p || typeof p !== 'object') return;
           if (!('name' in p)) p.name = '';
           if (!('booked' in p)) p.booked = false;
@@ -326,37 +323,33 @@ function updateTabDates() {
   });
 }
 
-// 🔧 BUG FIX #5: Disable auto-reset to prevent random wipes
 function checkAutoReset() { /* auto reset disabled */ }
 
 function getNextDay(dayName) {
   const days = {sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
   const today = new Date();
   const target = days[dayName];
-  const current = today.getDay();
-  let diff = target - current;
-  if (diff <= 0) diff += 7;
+  const diff = target - today.getDay();
+  // If today IS that day and before 10pm, show today
+  if (diff === 0 && today.getHours() < 22) { return new Date(today); }
+  // Otherwise show next occurrence
+  const daysUntil = diff <= 0 ? diff + 7 : diff;
   const next = new Date(today);
-  next.setDate(today.getDate() + diff);
+  next.setDate(today.getDate() + daysUntil);
   return next;
 }
 
-// 🔧 BUG FIX #2: Proper currentDay/DOM sync
 function setDay(day, el) {
-  currentDay = day;  // Set state variable
+  currentDay = day;
   weekView = false;
   if (attView) exitAttView();
-  // Update all UI elements
   document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('week-btn').classList.remove('active');
-  el.classList.add('active');  // Mark button as active
-  // Update nav display
+  el.classList.add('active');
   document.getElementById('nav-day').textContent = formatDate(getNextDay(day));
   document.querySelector('.wa-btn').onclick = shareWhatsApp;
-  // Update reset button text
   const rb = document.getElementById('reset-day-btn');
   if (rb) { rb.style.display = ''; rb.textContent = 'Reset ' + day.charAt(0).toUpperCase()+day.slice(1); }
-  // Re-render with new day
   render();
 }
 
@@ -519,7 +512,27 @@ function renderAtt() {
       card.appendChild(row);
     });
     container.appendChild(card);
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'att-share-btn';
+    shareBtn.textContent = 'Share ' + day.charAt(0).toUpperCase()+day.slice(1) + ' Attendance';
+    shareBtn.addEventListener('click', (function(d) {
+      return function() { shareAttWhatsApp(d); };
+    })(day));
+    container.appendChild(shareBtn);
   });
+}
+
+function shareAttWhatsApp(day) {
+  if (!attState[day]) return;
+  const date = getNextDay(day);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateStr = ordinal(date.getDate()) + ' ' + months[date.getMonth()];
+  let msg = '\uD83C\uDFF8 *Attendance - ' + day.charAt(0).toUpperCase()+day.slice(1) + ' ' + dateStr + '*\n\n';
+  ATT_MEMBERS.forEach(m => {
+    const present = attState[day][m.name] || false;
+    msg += (present ? '\u2705' : '\u274C') + ' ' + m.name + '\n';
+  });
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function toggleAtt(day, name, val) {
@@ -590,18 +603,8 @@ function saveSingleModal() {
   showToast(msg);
 }
 
-// 🔧 BUG FIX #3: Safety checks for undefined editingSlot/editingPlayer
 function clearSinglePlayer() {
-  // Protect against undefined values
-  if (!state || currentDay === null || editingSlot === null || editingPlayer === null) {
-    console.error('Cannot clear player: invalid state');
-    return;
-  }
-  if (!state[currentDay] || !state[currentDay][editingSlot] || !state[currentDay][editingSlot].players[editingPlayer]) {
-    console.error('Cannot clear player: slot or player does not exist');
-    return;
-  }
-  
+  if (!state || editingSlot === null || editingPlayer === null) return;
   const p = state[currentDay][editingSlot].players[editingPlayer];
   p.name = ''; p.booked = false; p.court = null;
   document.getElementById('single-modal-bg').classList.remove('open');
@@ -612,21 +615,15 @@ function clearSinglePlayer() {
   showToast('Spot cleared');
 }
 
-// 🔧 CODE PROTECTION: 4-digit code required for reset (7777)
 function confirmResetDay() {
   const dayLabel = currentDay.charAt(0).toUpperCase() + currentDay.slice(1);
-  const code = prompt('🔒 Enter 4-digit code to reset ' + dayLabel + ' bookings:');
-  
-  if (code === null) {
-    // User cancelled - do nothing
-    return;
-  }
-  
+  const code = prompt('Enter PIN to reset ' + dayLabel + ' bookings:');
+  if (code === null) return;
   if (code === '7777') {
     state[currentDay] = makeDefaultState()[currentDay];
-    saveData().then(() => { render(); showToast('✓ ' + dayLabel + ' bookings reset'); });
+    saveData().then(() => { render(); showToast(dayLabel + ' reset'); });
   } else {
-    showToast('❌ Incorrect code. Reset cancelled.');
+    showToast('Wrong PIN. Reset cancelled.');
   }
 }
 
@@ -635,7 +632,7 @@ function shareWhatsApp() {
   const date = getNextDay(currentDay);
   const dayLabel = formatDate(date);
   const slots = state[currentDay];
-  let msg = '&#127992; *Court Booker - ' + dayLabel + '*\n';
+  let msg = '\uD83C\uDFF8 *Court Booker - ' + dayLabel + '*\n';
   msg += "Queen's Diamond Jubilee Centre\n\n";
   slots.forEach(slot => {
     msg += '*' + slot.time + '*\n';
@@ -652,7 +649,7 @@ function shareWhatsApp() {
 
 function shareWeekWhatsApp() {
   if (!state) return;
-  let msg = "&#127992; *Court Booker - This Week*\n";
+  let msg = '\uD83C\uDFF8 *Court Booker - This Week*\n';
   msg += "Queen's Diamond Jubilee Centre\n\n";
   ['monday','wednesday','thursday'].forEach(day => {
     const date = getNextDay(day);
