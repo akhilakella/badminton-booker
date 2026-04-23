@@ -3,19 +3,14 @@ import json, os, redis
 
 app = Flask(__name__, static_folder='public')
 
-REDIS_URL = os.environ.get('REDIS_URL')
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://red-d6q97f14tr6s73fkm7ag:e05qaD5mUxK3Fs7Tp3qUubJYsFaX1MKp@red-d6q97f14tr6s73fkm7ag:6379')
 
-# safer redis connection
-rdb = redis.from_url(REDIS_URL, decode_responses=True) if REDIS_URL else None
+rdb = redis.from_url(REDIS_URL, decode_responses=True)
 
 REDIS_KEY = 'courtbooker:bookings'
 ATT_KEY = 'courtbooker:attendance'
 
 RESET_CODE = "6767"
-
-# 🔧 Backup file paths (persist across deployments)
-BACKUP_FILE = '/tmp/bookings_backup.json'
-ATT_BACKUP_FILE = '/tmp/attendance_backup.json'
 
 DEFAULT_DATA = {
     "monday": [
@@ -42,84 +37,32 @@ DEFAULT_ATT = {
 }
 
 
-# 🔧 BACKUP SYSTEM: Load from file if Redis is empty
 def load_data():
-    if not rdb:
-        return json.loads(json.dumps(DEFAULT_DATA))
-
     val = rdb.get(REDIS_KEY)
-
-    # If Redis is empty, try to restore from backup file
     if not val:
-        if os.path.exists(BACKUP_FILE):
-            try:
-                with open(BACKUP_FILE, 'r') as f:
-                    backup_data = json.load(f)
-                    print(f"[INFO] Restored bookings from backup file", flush=True)
-                    rdb.set(REDIS_KEY, json.dumps(backup_data))
-                    return backup_data
-            except Exception as e:
-                print(f"[ERROR] Failed to load backup: {e}", flush=True)
-        
-        # No backup found, use defaults
+        print("[INFO] No bookings in Redis, using defaults", flush=True)
         rdb.set(REDIS_KEY, json.dumps(DEFAULT_DATA))
         return json.loads(json.dumps(DEFAULT_DATA))
-
     return json.loads(val)
 
 
-# 🔧 SAVE WITH BACKUP: Always save to both Redis and file
 def save_data(data):
-    if rdb:
-        rdb.set(REDIS_KEY, json.dumps(data))
-    
-    # Always backup to file as failsafe
-    try:
-        with open(BACKUP_FILE, 'w') as f:
-            json.dump(data, f)
-        print(f"[INFO] Bookings backed up to file", flush=True)
-    except Exception as e:
-        print(f"[ERROR] Backup failed: {e}", flush=True)
+    rdb.set(REDIS_KEY, json.dumps(data))
+    print("[INFO] Bookings saved to Redis", flush=True)
 
 
-# 🔧 BACKUP SYSTEM: Load attendance from file if Redis is empty
 def load_att():
-    if not rdb:
-        return json.loads(json.dumps(DEFAULT_ATT))
-
     val = rdb.get(ATT_KEY)
-
-    # If Redis is empty, try to restore from backup file
     if not val:
-        if os.path.exists(ATT_BACKUP_FILE):
-            try:
-                with open(ATT_BACKUP_FILE, 'r') as f:
-                    backup_data = json.load(f)
-                    print(f"[INFO] Restored attendance from backup file", flush=True)
-                    rdb.set(ATT_KEY, json.dumps(backup_data))
-                    return backup_data
-            except Exception as e:
-                print(f"[ERROR] Failed to load att backup: {e}", flush=True)
-        
-        # No backup found, use defaults
+        print("[INFO] No attendance in Redis, using defaults", flush=True)
         rdb.set(ATT_KEY, json.dumps(DEFAULT_ATT))
         return json.loads(json.dumps(DEFAULT_ATT))
-
     return json.loads(val)
 
 
-# 🔧 SAVE WITH BACKUP: Always save to both Redis and file
 def save_att(data):
-    if rdb:
-        rdb.set(ATT_KEY, json.dumps(data))
-    
-    # Always backup to file as failsafe
-    try:
-        with open(ATT_BACKUP_FILE, 'w') as f:
-            json.dump(data, f)
-        print(f"[INFO] Attendance backed up to file", flush=True)
-    except Exception as e:
-        print(f"[ERROR] Attendance backup failed: {e}", flush=True)
+    rdb.set(ATT_KEY, json.dumps(data))
+    print("[INFO] Attendance saved to Redis", flush=True)
 
 
 @app.route('/')
@@ -169,20 +112,15 @@ def update_player():
 def update_bookings():
     data = request.get_json()
 
-    # stronger protection against accidental wipes
     if not data or not isinstance(data, dict):
         return jsonify({"ok": False, "error": "Invalid payload"}), 400
 
-    # 🔧 IMPROVED: Check structure instead of just empty values
     required_days = {'monday', 'wednesday', 'thursday'}
     if not all(day in data for day in required_days):
-        print(f"[WARNING] Missing required days in request", flush=True)
         return jsonify({"ok": False, "error": "Missing required days"}), 400
-    
-    # Ensure each day has slots
+
     for day in required_days:
         if not isinstance(data[day], list) or len(data[day]) == 0:
-            print(f"[WARNING] No slots for {day}", flush=True)
             return jsonify({"ok": False, "error": f"No slots for {day}"}), 400
 
     save_data(data)
