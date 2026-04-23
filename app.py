@@ -10,7 +10,7 @@ rdb = redis.from_url(REDIS_URL, decode_responses=True)
 REDIS_KEY = 'courtbooker:bookings'
 ATT_KEY = 'courtbooker:attendance'
 
-RESET_CODE = "6767"
+RESET_CODE = "7777"
 
 DEFAULT_DATA = {
     "monday": [
